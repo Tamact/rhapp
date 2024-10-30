@@ -1,0 +1,15 @@
+streamlit == 1.39.0  
+pandas  == 2.2.3
+numpy == 3.1
+nltk == 3.9.1
+pdfminer == 20191125
+psycopg2 == 2.9.9
+qdrant-client == 1.12.0
+sentence-transformers == 3.1.1
+plotly == 5.24.1
+
+
+Modéles:
+all-MPNet-base-v2
+paraphrase-MiniLM-L12-v2
+all-MiniLM-L12-v2
