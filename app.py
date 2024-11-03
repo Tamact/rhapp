@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email
-from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models
+from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
 from visualization import plot_results, plot_pie_chart
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
@@ -140,8 +140,7 @@ def main():
             titre = st.text_input("Titre *", placeholder="Entrez le titre", key="titre", help="Titre de l'offre")
             offre_societe = st.text_input("Nom de la société *", placeholder="Entrez le nom de la sociéte", key="societe", help="Nom de la sociéte qui a fait l'offre")
             text_offre = st.text_area("Collez le texte de l'offre d'emploi ici", height=300)
-
-        
+            
         else:
             titre = st.text_input("Nom de l'offre")
             offre_societe = st.text_input("Nom de la société")
@@ -195,11 +194,13 @@ def main():
         # Sélectionner plusieurs CVs et une seule offre
         selected_cvs = st.multiselect(
             "Sélectionnez un ou plusieurs candidats",
-            options=[(cv['nom'], cv['prenom']) for cv in cvs]  
+            options=[(cv['nom'], cv['prenom']) for cv in cvs],
+            help="Sélectionnez les cvs des candidats pour calculer la similarité"  
         )
 
         
-        selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres])
+        selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
+                                      help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
 
         # Bouton pour calculer la similarité
         if st.button("Calculer la Similarité"):
@@ -260,7 +261,7 @@ def main():
             df_results = pd.DataFrame(results)
             df_results = df_results.sort_values(by="Similarité Cosinus", ascending=False)
             
-            st.dataframe(df_results)
+            st.dataframe(df_results.style.apply(highlight_best_candidates, axis=1))
 
             # Stocker les résultats dans le session state pour communication
             session_state['df_results'] = df_results
@@ -320,37 +321,38 @@ def main():
         
         if 'df_results' in session_state:
             st.write("### Filtrer les CVs")
-            filter_type = st.selectbox("Choisissez le type de filtrage", ("Compétences", "Résultats"))
+            with st.expander("Options de Filtrage Avancé"):
+                filter_type = st.selectbox("Choisissez le type de filtrage", ("Compétences", "Résultats"))
 
-            if filter_type == "Compétences":
-                skills_input = st.text_area("Entrez les compétences à rechercher (séparées par une virgule)")
-                skills = [skill.strip() for skill in skills_input.split(",")]
+                if filter_type == "Compétences":
+                    skills_input = st.text_area("Entrez les compétences à rechercher (séparées par une virgule)", help="Exemple : Python, analyse de données")
+                    skills = [skill.strip() for skill in skills_input.split(",")]
 
-                if st.button("Filtrer par Compétences"):
-                    if not skills_input.strip():
-                        st.error("Veuillez entrer au moins une compétence.")
-                    else:
+                    if st.button("Filtrer par Compétences"):
+                        if not skills_input.strip():
+                            st.error("Veuillez entrer au moins une compétence.")
+                        else:
+                            df_results = session_state['df_results']
+                            cvs_texts = session_state['cvs_texts']
+
+                            filtered_df = filter_cvs_by_skills(df_results, skills, cvs_texts)
+
+                            if not filtered_df.empty:
+                                st.dataframe(filtered_df)
+                                plot_results(filtered_df)
+
+                elif filter_type == "Résultats":
+                    st.write("Définissez les seuils de filtrage")
+                    cosine_threshold = st.slider("Seuil de Similarité Cosinus", 0.0, 1.0, 0.5)
+                    num_cvs_to_show = st.slider("Nombre de CVs à afficher", 1, len(session_state['df_results']), 5)
+
+                    if st.button("Filtrer par Résultats"):
                         df_results = session_state['df_results']
-                        cvs_texts = session_state['cvs_texts']
-
-                        filtered_df = filter_cvs_by_skills(df_results, skills, cvs_texts)
+                        filtered_df = filter_cvs_by_results(df_results, cosine_threshold, num_cvs_to_show)
 
                         if not filtered_df.empty:
                             st.dataframe(filtered_df)
                             plot_results(filtered_df)
-
-            elif filter_type == "Résultats":
-                st.write("Définissez les seuils de filtrage")
-                cosine_threshold = st.slider("Seuil de Similarité Cosinus", 0.0, 1.0, 0.5)
-                num_cvs_to_show = st.slider("Nombre de CVs à afficher", 1, len(session_state['df_results']), 5)
-
-                if st.button("Filtrer par Résultats"):
-                    df_results = session_state['df_results']
-                    filtered_df = filter_cvs_by_results(df_results, cosine_threshold, num_cvs_to_show)
-
-                    if not filtered_df.empty:
-                        st.dataframe(filtered_df)
-                        plot_results(filtered_df)
         #for cv_id in selected_cvs:
             #nom, prenom = cv_id[0], cv_id[1]
             #if st.button("Enregistrer les résultats", key="enregistrer_resultat"):

@@ -64,3 +64,9 @@ def load_models():
     return model1, model2, model3
 
 model1, model2, model3 = load_models()
+
+def highlight_best_candidates(row):
+    """Met en évidence les meilleurs candidats."""
+    return ['background-color: #E1AD01' if row['Similarité Cosinus'] > 0.7 else '' for _ in row]
+
+
