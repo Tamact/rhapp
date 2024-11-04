@@ -26,15 +26,6 @@ def save_to_user(nom, prenom, mail, numero_tlfn):
         
         # Récupération de l'ID de l'utilisateur (assurez-vous que c'est un entier)
         user_id = cursor.fetchone()[0]
-
-        # Insertion du CV avec la date actuelle
-        #cursor.execute(sql.SQL('''
-            #INSERT INTO "cv" (user_id, date_insertion, cv_text)
-            #VALUES (%s, NOW(), %s)
-            #RETURNING cv_id;
-        #'''), (user_id))
-        
-
         return user_id
 
     except psycopg2.Error as e:
@@ -98,11 +89,9 @@ def save_to_resultat(cv_id, offre_id, cosine_similarity):
         print(f"Erreur lors de l'enregistrement du résultat: {e}")
         return None
 
-    #finally:
-        #if conn:
-            #conn.close()
+   
  
-def save_to_cv(user_id, cv_text):
+def save_to_cv(user_id, cv_text, competences):
     try:
         # Correction: Appel correct de la fonction connect_to_db()
         conn = connect_to_db()  
@@ -111,10 +100,10 @@ def save_to_cv(user_id, cv_text):
 
         # Insertion du CV avec la date actuelle et le texte du CV
         cursor.execute(sql.SQL('''
-            INSERT INTO "cv" (user_id, date_insertion, cv_text)
-            VALUES (%s, NOW(), %s)
+            INSERT INTO "cv" (user_id, date_insertion, cv_text, competences)
+            VALUES (%s, NOW(), %s, %s)
             RETURNING cv_id;
-        '''), (user_id, cv_text))
+        '''), (user_id, cv_text, competences))
 
         # Récupération de l'ID du CV
         cv_id = cursor.fetchone()[0]
@@ -247,7 +236,7 @@ def get_all_cvs():
     Récupérer tous les enregistrements de la table des offres.
     """
     query = sql.SQL('''
-        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
     ''')
@@ -265,7 +254,8 @@ def get_all_cvs():
                 "date_insertion": v[2],
                 "cv_text": v[3],
                 "nom": v[4],
-                "prenom": v[5]
+                "prenom": v[5],
+                "competences": v[6]
 
             }
             for v in cv
@@ -356,15 +346,7 @@ def save_to_user1(nom, prenom):
         
         # Récupération de l'ID de l'utilisateur (assurez-vous que c'est un entier)
         user_id = cursor.fetchone()[0]
-
-        # Insertion du CV avec la date actuelle
-        #cursor.execute(sql.SQL('''
-            #INSERT INTO "cv" (user_id, date_insertion, cv_text)
-            #VALUES (%s, NOW(), %s)
-            #RETURNING cv_id;
-        #'''), (user_id))
         
-
         return user_id
 
     except psycopg2.Error as e:

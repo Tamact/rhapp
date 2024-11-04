@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email
+from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, calculer_similarite
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
 from visualization import plot_results, plot_pie_chart
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
@@ -19,6 +19,15 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto",
 )
+
+
+poids_kano = {
+    "Indispensable": 1,
+    "Attractive": 2,
+    "Proportionnelle": 3,
+    "Indifferent": 0,
+    "Double-tranchant": -1
+}
 
 def main():
 
@@ -105,6 +114,8 @@ def main():
             prenom = st.text_input("Prénom *", placeholder="Entrez votre prénom", key="prenom", help="Prénom du candidat")
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
+            competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
+            
             cv_text = extract_text_from_pdf(cv_file)
         
             if st.button("Enregistrer CV"):
@@ -119,7 +130,8 @@ def main():
                         user_id = save_to_user(nom, prenom, mail, numero_tlfn)
 
                         if user_id:  
-                            cv_id = save_to_cv(user_id, preprocessed_cv_text)
+                            competences_list = [competence.strip() for competence in competences.split(",")]
+                            cv_id = save_to_cv(user_id, preprocessed_cv_text, competences_list)
                 
                             if cv_id:
                                 st.success("CV enregistré avec succès.")
@@ -180,6 +192,9 @@ def main():
         st.header("Calcul de similarité entre CVs et offre")
         # Récupérer les CVs et offres d'emploi
         cvs = get_all_cvs()  
+        for cv in cvs:
+            if cv['competences'] is None:  # Vérifie si competences est None
+                cv['competences'] = []  # Initialise comme une liste vide
         offres = get_all_offres() 
         cv_options = {(cv["nom"], cv["prenom"]): cv["cv_id"] for cv in cvs}
 
@@ -201,6 +216,23 @@ def main():
         
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
                                       help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
+        
+                # Ajouter la saisie des compétences avec le modèle de Kano
+        competences_utilisateur = []
+        st.write("### Saisir les Compétences")
+        competence_counter = 0
+
+        while True:
+            competence = st.text_input(f"Entrez une compétence {competence_counter + 1} (ou laissez vide pour terminer) :", key=f"competence_{competence_counter}")
+            if competence:
+                kano_category = st.selectbox(f"Sélectionnez la catégorie Kano pour '{competence}':", 
+                    options=["Indispensable", "Attractive", "Proportionnelle", "Indifferent", "Double-tranchant"], key=f"kano_category_{competence_counter}")
+                competences_utilisateur.append((competence.strip(), kano_category))
+                competence_counter += 1 
+            else:
+                break
+
+        #calculer_similarite(competences_utilisateur)
 
         # Bouton pour calculer la similarité
         if st.button("Calculer la Similarité"):
@@ -225,19 +257,28 @@ def main():
 
             # Calculer la similarité pour chaque CV sélectionné
             for cv_id in selected_cvs:
-                cv_text = next(cv['cv_text'] for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
+                cv = next(cv for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
+                score_similarite = 0
+
+                for competence, kano_category in competences_utilisateur:
+                    if competence in cv['competences']:  # Vérifiez si la compétence est présente dans le CV
+                        score_similarite += poids_kano[kano_category]  # Ajoutez le poids selon la catégorie Kano
+                score_similarite = min(score_similarite, 1)  
 
                 # Calculer les vecteurs des CVs 
-                cv_vectors = np.concatenate([model1.encode([cv_text]), model2.encode([cv_text]), model3.encode([cv_text])], axis=1)
+                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']])], axis=1)
 
                 # Calculer la similarité cosinus
-                similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0])
+                similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0]) + score_similarite/25
 
                 # Stocker le résultat dans une liste pour affichage
                 results.append({
                     "Nom du CV": cv_id,
                     "Similarité Cosinus": similarity
                 })
+                # Tri des résultats par score de similarité
+            results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
+            #return results
             #Stocker vecteur dans la bd qdrant
 
                 #offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1).flatten()
@@ -257,11 +298,20 @@ def main():
                 time.sleep(0.01)  
                 progress_bar.progress(perc_completed)
 
-            #Afficher résultat
+                # Afficher les résultats
             df_results = pd.DataFrame(results)
-            df_results = df_results.sort_values(by="Similarité Cosinus", ascending=False)
-            
             st.dataframe(df_results.style.apply(highlight_best_candidates, axis=1))
+
+            # Afficher le meilleur candidat
+            if results:
+                best_candidate = results[0]
+                st.success(f"Le meilleur candidat est {best_candidate['Nom du CV']} avec une similarité de {best_candidate['Similarité Cosinus']:.4f}")
+
+            # Stocker les résultats dans le session state pour communication
+            session_state['df_results'] = df_results
+            session_state['cvs_texts'] = cvs_texts
+            
+            
 
             # Stocker les résultats dans le session state pour communication
             session_state['df_results'] = df_results
@@ -298,23 +348,6 @@ def main():
 
             plot_results(df_results)
 
-            # Diamgramme circulaire avec répartition  
-            #bins = [0, 0.4, 0.7, 1.0]
-            #labels = ['0-0.4', '0.41-0.7', '0.71-1.0']
-            #df_results['Range'] = pd.cut(df_results['Similarité Cosinus'], bins=bins, labels=labels, right=True)
-            #pie_data = df_results['Range'].value_counts()
-
-            # Utilisation de Pygwalker pour afficher le graphique circulaire
-            #st.write("### Répartition des CVs par Similarité Cosinus")
-            #pyg.walk(pie_data.reset_index(name='count').rename(columns={'index': 'Range'}))
-            # Créer un DataFrame pour Plotly
-            #pie_df = pie_data.reset_index(name='count').rename(columns={'index': 'Range'})
-
-            # Créer le graphique circulaire
-            #fig = px.pie(pie_df, values='count', names='Range', title='Répartition des CVs par Similarité Cosinus')
-
-            # Afficher le graphique dans Streamlit
-            #st.plotly_chart(fig)
             plot_pie_chart(df_results)
 
         # Filtrage par compétences ou résultats 
@@ -353,39 +386,6 @@ def main():
                         if not filtered_df.empty:
                             st.dataframe(filtered_df)
                             plot_results(filtered_df)
-        #for cv_id in selected_cvs:
-            #nom, prenom = cv_id[0], cv_id[1]
-            #if st.button("Enregistrer les résultats", key="enregistrer_resultat"):
-                #try:
-                    # Vérifier si l'utilisateur existe déjà
-                    #user_id = get_user_id1(nom, prenom)
-                    #if not user_id:
-                        #user_id = save_to_user1(nom, prenom) 
-
-                    # Vérifier si le CV existe déjà
-                    #cv_id = get_cv_id(user_id)
-                    #if not cv_id:
-                        #cv_id = save_to_cv(user_id, cv_text)  
-
-                    # Vérifier si l'offre existe déjà
-                    #offre_id = get_offre_id(titre, offre_societe)
-                    #if not offre_id:
-                        #offre_id = save_to_offre(text_offre, offre_societe, titre)  
-
-                    # Si tout est bien récupéré/inséré, enregistrer le résultat
-                    #if user_id and offre_id and cv_id:
-                        #result_id = save_to_resultat(cv_id, offre_id, similarity)
-
-                        #if result_id:
-                            #st.success("Résultats des CVs enregistrés avec succès.")
-                        #else:
-                            #st.error("Erreur lors de l'enregistrement du résultat.")
-                    #else:
-                        #st.error("Échec de la récupération des IDs pour l'utilisateur, le CV ou l'offre.")
-
-                #except Exception as e:
-                    #st.error(f"Une erreur s'est produite lors de l'enregistrement des résultats : {e}")
-
 
     elif selected == "Gestion de la base de données":
         st.header("Gestion de la base de données")
@@ -400,9 +400,9 @@ def main():
             default_index=0,  
             styles={
                 "container": {"padding": "0!important", "background-color": "#F0F2D6"},  
-                "icon": {"color": "#191970", "font-size": "20px"},  # Style des icônes
+                "icon": {"color": "#191970", "font-size": "20px"}, 
                 "nav-link": {"font-size": "16px", "text-align": "center", "margin": "0px", "--hover-color": "#E1AD01"},
-                "nav-link-selected": {"background-color": "#E1AD01"},  # Couleur de l'option sélectionnée
+                "nav-link-selected": {"background-color": "#E1AD01"}, 
                         },
             ) 
     
@@ -560,7 +560,7 @@ def main():
             if not session_state.cv:
                 st.write("Aucun cv trouvé dans la base de données.")
                 return
-            session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text"])
+            session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text","competences"])
             st.dataframe(session_state.cv_df)
     
     if selected == "Gestion de suivi des candidats":
