@@ -31,7 +31,7 @@ def main():
     
 
     st.image("logo.png", width=300)
-    st.caption("GTP: Force intérieure, succés extérieur")   
+    st.caption("GTP: Force intérieure, succés extérieur,testers")   
         
     # Barre de navigation
     selected = option_menu( 
