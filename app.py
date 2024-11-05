@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="auto",
 )
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, calculer_similarite
+from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
 from visualization import plot_results, plot_pie_chart
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
