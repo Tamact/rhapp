@@ -56,8 +56,8 @@ def set_app_theme():
 #Fonction d'envoi de mails automatiques
 
 def send_email(recipient, subject, message_body):
-    sender = "ibrahimasorysane986@gmail.com"  
-    password = "SidietRamavontal'écolechaquemardia8h."  
+    sender = "iss654864@gmail.com"  
+    password = "fjxhsladuowjkygl"  
 
     # Création du message de recommandation
    #msg = MIMEText(f"Cher candidat,\n\nVous avez été recommandé pour une opportunité.\n\nCordialement,\nL'équipe de recrutement GTP")
@@ -78,12 +78,12 @@ def send_email(recipient, subject, message_body):
     except Exception as e:
         st.error(f"Erreur lors de l'envoi de l'e-mail: {str(e)}")
 
-def calculer_similarite(competences_utilisateur):
-    poids_kano = {
-        "Must-be": 2,        # Poids élevé
-        "One-dimensional": 1, # Poids normal
-        "Attractive": 1,      # Poids normal
-        "Indifferent": 0,     # Pas de poids
-        "Reverse": -1         # Peut réduire la similarité
-    }
+# def calculer_similarite(competences_utilisateur):
+#     poids_kano = {
+#         "Must-be": 2,        # Poids élevé
+#         "One-dimensional": 1, # Poids normal
+#         "Attractive": 1,      # Poids normal
+#         "Indifferent": 0,     # Pas de poids
+#         "Reverse": -1         # Peut réduire la similarité
+#     }
 
