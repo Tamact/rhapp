@@ -1,4 +1,12 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
+# Définir le thème
+st.set_page_config(
+    page_title="GTP",
+    page_icon="",
+    layout="wide",
+    initial_sidebar_state="auto",
+)
 import pandas as pd
 from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, calculer_similarite
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
@@ -8,17 +16,11 @@ import base64
 from io import StringIO
 import numpy as np
 from database import *
-from streamlit_option_menu import option_menu
+
 import time
 
 
-# Définir le thème
-st.set_page_config(
-    page_title="GTP",
-    page_icon="",
-    layout="wide",
-    initial_sidebar_state="auto",
-)
+
 
 
 poids_kano = {
@@ -40,7 +42,7 @@ def main():
     
 
     st.image("logo.png", width=300)
-    st.caption("GTP: Force intérieure, succés extérieur,testers")   
+    st.caption("GTP: Force intérieure, succés extérieur")   
         
     # Barre de navigation
     selected = option_menu( 
@@ -581,20 +583,24 @@ def main():
             message_body = st.text_area("Message de recommandation")
 
             
-            email = "iss654864@gmail.com"
+            email = "fabricejordan2001@gmail.com"
+            # !test pour avoir le mail du candidat
+            # st.write(email,st.session_state.selected_candidate['mail'])
 
             if st.button("Envoyer la recommandation"):
-                if message_body:
+                if not selected_rating:
+                    st.warning("noté dabors le candidat")
+                elif message_body:
                     # Message d'email
-                    email = "iss654864@gmail.com"
+                    email = "fabricejordan2001@gmail.com"
                     email_subject = f"Recommandation pour {selected_candidate}"
                     email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}"
                 
                     # Envoi de l'email
                     if send_email(email, email_subject, email_message):
                         st.success("La recommandation a été envoyée avec succès.")
-                    else:
-                        st.error("Échec de l'envoi de l'email.")
+                    # else:
+                        # st.error("Échec de l'envoi de l'email.")
                 else:
                     st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
 

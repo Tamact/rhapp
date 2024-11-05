@@ -56,8 +56,8 @@ def set_app_theme():
 #Fonction d'envoi de mails automatiques
 
 def send_email(recipient, subject, message_body):
-    sender = "ibrahimasorysane986@gmail.com"  
-    password = "SidietRamavontal'écolechaquemardia8h."  
+    sender = "iss654864@gmail.com"  
+    password = "fjxhsladuowjkygl"  
 
     # Création du message de recommandation
    #msg = MIMEText(f"Cher candidat,\n\nVous avez été recommandé pour une opportunité.\n\nCordialement,\nL'équipe de recrutement GTP")
