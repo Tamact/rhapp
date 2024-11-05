@@ -585,7 +585,7 @@ def main():
             
             email = "fabricejordan2001@gmail.com"
             # !test pour avoir le mail du candidat
-            # st.write(email,st.session_state.selected_candidate['mail'])
+            st.write(st.session_state.selected_candidate['mail'])
 
             if st.button("Envoyer la recommandation"):
                 if not selected_rating:
