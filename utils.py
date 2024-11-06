@@ -78,12 +78,4 @@ def send_email(recipient, subject, message_body):
     except Exception as e:
         st.error(f"Erreur lors de l'envoi de l'e-mail: {str(e)}")
 
-# def calculer_similarite(competences_utilisateur):
-#     poids_kano = {
-#         "Must-be": 2,        # Poids élevé
-#         "One-dimensional": 1, # Poids normal
-#         "Attractive": 1,      # Poids normal
-#         "Indifferent": 0,     # Pas de poids
-#         "Reverse": -1         # Peut réduire la similarité
-#     }
 
