@@ -517,7 +517,6 @@ def main():
                 text_offre = st.text_area("text_offre", st.session_state.selected_offre["text_offre"], key="textOffre_input", height=300)
                 
                 # Bouton pour enregistrer les modifications
-    
                 if st.button("Enregistrer les modifications"):
                     updated_data = {
                         "titre": titre,
