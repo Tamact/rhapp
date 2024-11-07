@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+
 # Définir le thème
 st.set_page_config(
     page_title="GTP",
@@ -16,7 +17,6 @@ import base64
 from io import StringIO
 import numpy as np
 from database import *
-
 import time
 
 
@@ -250,10 +250,10 @@ def main():
             offer_text = next(offre['text_offre'] for offre in offres if offre['titre'] == selected_offer)
             
             # Charger les modèles une seule fois
-            model1, model2, model3 = load_models()
+            model1, model2, model3, model4 = load_models()
 
             # Calculer les vecteurs de l'offre
-            offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1)
+            offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text]), model4.encode([offer_text])], axis=1)
 
             results = []
 
@@ -268,7 +268,7 @@ def main():
                 score_similarite = min(score_similarite, 1)  
 
                 # Calculer les vecteurs des CVs 
-                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']])], axis=1)
+                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']]), model4.encode([cv['cv_text']])], axis=1)
 
                 # Calculer la similarité cosinus
                 similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0]) + score_similarite/25
