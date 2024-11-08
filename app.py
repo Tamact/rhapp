@@ -1,15 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-
-# Définir le thème
-st.set_page_config(
-    page_title="GTP",
-    page_icon="",
-    layout="wide",
-    initial_sidebar_state="auto",
-)
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email
+from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questions
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
 from visualization import plot_results, plot_pie_chart
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
@@ -20,7 +12,13 @@ from database import *
 import time
 
 
-
+# Définir le thème
+st.set_page_config(
+    page_title="GTP",
+    page_icon="",
+    layout="wide",
+    initial_sidebar_state="auto",
+)
 
 
 poids_kano = {
@@ -47,8 +45,8 @@ def main():
     # Barre de navigation
     selected = option_menu( 
         menu_title="M E N U", 
-        options=["Accueil", "Importer CV", "Importer Offre", "Calculer Similarité", "Gestion de la base de données", "Gestion de suivi des candidats"],
-        icons=["house", "upload", "file-earmark-text", "calculator", "database", "stars"],
+        options=["Accueil", "Importer CV", "Importer Offre", "Calculer Similarité", "Gestion de la base de données", "Gestion de suivi des candidats", "Génération de questions d'entretien"],
+        icons=["house", "upload", "file-earmark-text", "calculator", "database", "stars", "chat"],
         menu_icon="cast",  
         default_index=0,  
         orientation="horizontal", 
@@ -571,8 +569,10 @@ def main():
         # Récupérer la liste des candidats
         candidates = get_all_candidates()
 
-        if candidates:
+        if "selected_candidate" not in  st.session_state:
             # Sélectionner un candidat
+            st.session_state.selected_candidate = None
+            #selected_candidate = st.session_state.selected_candidate
             selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", candidates)
 
             # Notation par étoiles
@@ -589,7 +589,7 @@ def main():
 
             if st.button("Envoyer la recommandation"):
                 if not selected_rating:
-                    st.warning("noté dabors le candidat")
+                    st.warning("notez d'abord le candidat")
                 elif message_body:
                     # Message d'email
                     email = "fabricejordan2001@gmail.com"
@@ -599,10 +599,22 @@ def main():
                     # Envoi de l'email
                     if send_email(email, email_subject, email_message):
                         st.success("La recommandation a été envoyée avec succès.")
-                    # else:
-                        # st.error("Échec de l'envoi de l'email.")
                 else:
                     st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
+
+    if selected == "Génération de questions d'entretien":
+        st.header("Génération de Questions d'Entretien")
+        profile = st.text_area("Entrez le profil du candidat (ex: Data scientist avec 3 ans d'expérience en Machine Learning)")
+
+        if st.button("Générer des questions d'entretien"):
+            if profile:
+                questions = generate_questions(profile, num_questions=10)
+                st.subheader("Questions générées :")
+                for i, question in enumerate(questions, 1):
+                    st.write(f"{i}. {question}")
+            else:
+                st.warning("Veuillez entrer le profil du candidat pour générer les questions.")
+
 
 
 if __name__ == "__main__":
