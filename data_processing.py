@@ -61,9 +61,10 @@ def load_models():
     model1 = SentenceTransformer('all-MPNet-base-v2')
     model2 = SentenceTransformer('paraphrase-MiniLM-L12-v2')
     model3 = SentenceTransformer('all-MiniLM-L12-v2')
-    return model1, model2, model3
+    model4 = SentenceTransformer('bert-base-nli-mean-tokens')
+    return model1, model2, model3, model4
 
-model1, model2, model3 = load_models()
+model1, model2, model3, model4 = load_models()
 
 def highlight_best_candidates(row):
     """Met en évidence les meilleurs candidats."""
