@@ -53,13 +53,13 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
         conn.close()
 
 
-def save_to_user(nom, prenom, mail, numero_tlfn):
+def save_to_user(nom, prenom, mail, numero_tlfn, profil):
     query = '''
-        INSERT INTO "candidat" (nom, prenom, mail, numero_tlfn)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO "candidat" (nom, prenom, mail, numero_tlfn, profil)
+        VALUES (%s, %s, %s, %s, %s)
         RETURNING user_id;
     '''
-    result = execute_query(query, (nom, prenom, mail, numero_tlfn), fetch_one=True)
+    result = execute_query(query, (nom, prenom, mail, numero_tlfn, profil), fetch_one=True)
     if result:
         user_id = result[0]
         logging.info(f"Candidat enregistré avec user_id: {user_id}")
@@ -97,12 +97,12 @@ def save_to_cv(user_id, cv_text, competences):
     return result[0] if result else None
 
 # Fonctions de récupération d'ID
-def get_user_id(nom, prenom, mail, numero_tlfn):
+def get_user_id(nom, prenom, mail, numero_tlfn, profil):
     query = '''
         SELECT user_id FROM "candidat"
-        WHERE nom = %s AND prenom = %s AND mail = %s AND numero_tlfn = %s;
+        WHERE nom = %s AND prenom = %s AND mail = %s AND numero_tlfn = %s AND profil = %s ;
     '''
-    result = execute_query(query, (nom, prenom, mail, numero_tlfn), fetch_one=True)
+    result = execute_query(query, (nom, prenom, mail, numero_tlfn, profil), fetch_one=True)
     return result[0] if result else None
 
 def get_cv_id(user_id):
@@ -123,9 +123,9 @@ def get_offre_id(titre, offre_societe):
 
 # Fonctions pour récupérer tous les enregistrements
 def get_all_candidates():
-    query = '''SELECT user_id, nom, prenom, mail, numero_tlfn FROM candidat;'''
+    query = '''SELECT user_id, nom, prenom, mail, numero_tlfn, profil FROM candidat;'''
     result = execute_query(query, fetch_all=True)
-    return [{"user_id": c[0], "nom": c[1], "prenom": c[2], "mail": c[3], "numero_tlfn": c[4]} for c in result] if result else []
+    return [{"user_id": c[0], "nom": c[1], "prenom": c[2], "mail": c[3], "numero_tlfn": c[4], "profil": c[5]} for c in result] if result else []
 
 def get_all_offres():
     query = '''SELECT offre_id, text_offre, offre_societe, titre FROM offre;'''
@@ -134,12 +134,12 @@ def get_all_offres():
 
 def get_all_cvs():
     query = '''
-        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences, candidat.profil
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
     '''
     result = execute_query(query, fetch_all=True)
-    return [{"cv_id": v[0], "user_id": v[1], "date_insertion": v[2], "cv_text": v[3], "nom": v[4], "prenom": v[5], "competences": v[6]} for v in result] if result else []
+    return [{"cv_id": v[0], "user_id": v[1], "date_insertion": v[2], "cv_text": v[3], "nom": v[4], "prenom": v[5], "competences": v[6], "profil":v[7]} for v in result] if result else []
 
 def get_all_resultats():
     query = '''SELECT resultat_id, cv_id, offre_id, cosine_similarity FROM resultat;'''

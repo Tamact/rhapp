@@ -15,3 +15,60 @@ DETAIL:  La clé (user_id)=(152) n'est pas présente dans la table « candidat ».
         RETURNING cv_id;
      - Params: (152, 'mamadou saliou diallo étudiantarts graphiques numériques e q 782600519 linkedin portfolio thiernosaliou74 gmail com keur massar éducation 2023 présent 2021 2022 2016 2017 licence arts graphiques numériques université virtuelle cheikh ahmidou kane sénégal baccalauréat série l2 lycée privée laïque cherif limane aidara yeumbeul brevet fin études moyen bfem cem keur massar 2 compétences adobe premier pro animation 2d adobe after e\ufb00ect adobe illustrator cinema 3d 4d photoshop typographie word langues wolof langue maternelle anglais avancé www enhancv com peulh langue maternelle espagnol avancé français compétent propulsé', [''])
 ERROR:root:Erreur lors de l'enregistrement du CV : cannot access local variable 'offre_id' where it is not associated with a value
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (133,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (156,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (157,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (157,)
+ERROR:root:Erreur lors de l'enregistrement du CV : save_to_user() missing 1 required positional argument: 'profil'
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne cv.profil n'existe pas
+LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
+                                                              ^
+ - Query: 
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences, cv.profil
+        FROM cv
+        JOIN candidat ON cv.user_id = candidat.user_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne cv.profil n'existe pas
+LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
+                                                              ^
+ - Query: 
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences, cv.profil
+        FROM cv
+        JOIN candidat ON cv.user_id = candidat.user_id;
+     - Params: None

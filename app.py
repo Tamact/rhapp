@@ -121,7 +121,7 @@ def main():
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
             competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
-            
+            profil = st.text_input("Profil du candidat", placeholder="Entrez le profil du candidat", key="Profil", help="Exemple: Développeur fullstack")
             cv_text = extract_text_from_pdf(cv_file)
         
             if st.button("Enregistrer CV"):
@@ -134,7 +134,7 @@ def main():
                         
                         preprocessed_cv_text = preprocess_text(cv_text)
                         # Enregistrement des informations de l'utilisateur
-                        user_id = save_to_user(nom, prenom, mail, numero_tlfn)
+                        user_id = save_to_user(nom, prenom, mail, numero_tlfn, profil)
 
                         if user_id:  
                             logging.info(f"user_id récupéré avec succès: {user_id}")
