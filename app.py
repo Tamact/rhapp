@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questions
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
-from visualization import plot_results, plot_pie_chart
+from visualization import *
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
 from io import StringIO
@@ -261,14 +261,11 @@ def main():
             results = []
 
             # Calculer la similarité pour chaque CV sélectionné
+            
             for cv_id in selected_cvs:
                 cv = next(cv for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
-                score_similarite = 0
-
-                for competence, kano_category in competences_utilisateur:
-                    if competence in cv['competences']:  # Vérifiez si la compétence est présente dans le CV
-                        score_similarite += poids_kano[kano_category]  # Ajoutez le poids selon la catégorie Kano
-                score_similarite = min(score_similarite, 1)  
+                score_similarite = sum(poids_kano[kano_category] for competence, kano_category in competences_utilisateur if competence in cv['competences'])
+                score_similarite = min(score_similarite, 1)   
 
                 # Calculer les vecteurs des CVs 
                 cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']]), model4.encode([cv['cv_text']])], axis=1)
@@ -284,7 +281,6 @@ def main():
                 # Tri des résultats par score de similarité
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
             
-
             store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
             store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
                 
@@ -324,35 +320,67 @@ def main():
             best_candidate = df_results.iloc[0]
             st.success(f"Le meilleur candidat est {best_candidate['Nom du CV']} avec une similarité de {best_candidate['Similarité Cosinus']:.4f}")
 
-            if 'df_results' in session_state:
+            if 'df_results' in session_state and not session_state['df_results'].empty:
+                df_results = session_state['df_results']
             
                 st.write("### Tableau de Bord")
 
-        # Calcul des métriques
-            total_cvs = len(session_state['df_results'])
-            max_similarity = session_state['df_results']['Similarité Cosinus'].max()
-            best_candidates_percentage = (len(session_state['df_results'][session_state['df_results']['Similarité Cosinus'] > 0.7]) / total_cvs) * 100 if total_cvs > 0 else 0
+                # Calcul des métriques
+                total_cvs = len(session_state['df_results'])
+                max_similarity = session_state['df_results']['Similarité Cosinus'].max()
+                best_candidates_percentage = (len(session_state['df_results'][session_state['df_results']['Similarité Cosinus'] > 0.7]) / total_cvs) * 100 if total_cvs > 0 else 0
 
-            col1, col2, col3 = st.columns(3)
-        
-            with col1:
-                st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
-                            f"<h3>Total CVs Importés</h3><h2>{total_cvs}</h2></div>", unsafe_allow_html=True)
-        
-            with col2:
-                st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
-                        f"<h3>Plus Grande Similarité</h3><h2>{max_similarity:.4f}</h2></div>", unsafe_allow_html=True)
-        
-            with col3:
-                st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
-                        f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
+                col1, col2, col3 = st.columns(3)
+            
+                with col1:
+                    st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
+                                f"<h3>Total CVs Importés</h3><h2>{total_cvs}</h2></div>", unsafe_allow_html=True)
+            
+                with col2:
+                    st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
+                            f"<h3>Plus Grande Similarité</h3><h2>{max_similarity:.4f}</h2></div>", unsafe_allow_html=True)
+            
+                with col3:
+                    st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
+                            f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
+                    
+            if 'df_results' in session_state:
+                # Section des options de sélection des graphiques
+                with st.form("form_selection_graphiques"):
+                    st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
+                    
+                    # Cases à cocher pour les graphiques
+                    show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
+                    show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
+                    show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
+                    show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
+                    show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
+                    show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
+                    show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
+                    
+                    # Bouton de validation du formulaire
+                    submitted = st.form_submit_button("Afficher les graphiques")
 
-            plot_results(df_results)
+                # Afficher les graphiques sélectionnés uniquement après validation du formulaire
+                if submitted and not df_results.empty:
+                    if show_bar_chart:
+                        plot_results(df_results)
+                    if show_pie_chart:
+                        plot_pie_chart(df_results)
+                    if show_histogram:
+                        plot_similarity_histogram(df_results)
+                    if show_cumulative_line:
+                        plot_cumulative_similarity(df_results)
+                    if show_scatter_plot:
+                        plot_similarity_scatter(df_results)
+                    if show_boxplot:
+                        plot_similarity_boxplot(df_results)
+                    if show_stacked_bar:
+                        plot_stacked_bar_competences(df_results)
 
-            plot_pie_chart(df_results)
 
-        # Filtrage par compétences ou résultats 
-        
+            # Filtrage par compétences ou résultats 
+            
         if 'df_results' in session_state:
             st.write("### Filtrer les CVs")
             with st.expander("Options de Filtrage Avancé"):
