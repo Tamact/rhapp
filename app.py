@@ -573,39 +573,47 @@ def main():
 
         # Récupérer la liste des candidats
         candidates = get_all_candidates()
+        if not candidates:
+            st.error("Aucun candidat trouvé.")
+        else:
+            # Sélecteur de candidat
+            selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", 
+                                            [f"{c['nom']} {c['prenom']}" for c in candidates])
 
-        if "selected_candidate" not in  st.session_state:
-            # Sélectionner un candidat
-            st.session_state.selected_candidate = None
-            #selected_candidate = st.session_state.selected_candidate
-            selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", candidates)
+            # Trouver le candidat sélectionné dans la liste
+            candidate_details = next((c for c in candidates if f"{c['nom']} {c['prenom']}" == selected_candidate), None)
 
-            # Notation par étoiles
-            sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
-            selected_rating = st.feedback("stars")
-
-            # Saisie du message de recommandation
-            message_body = st.text_area("Message de recommandation")
-
-            
-            email = "fabricejordan2001@gmail.com"
-            # !test pour avoir le mail du candidat
-            st.write(st.session_state.selected_candidate['mail'])
-
-            if st.button("Envoyer la recommandation"):
-                if not selected_rating:
-                    st.warning("notez d'abord le candidat")
-                elif message_body:
-                    # Message d'email
-                    email = "fabricejordan2001@gmail.com"
-                    email_subject = f"Recommandation pour {selected_candidate}"
-                    email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}"
+            # Vérifier si le candidat a été trouvé
+            if candidate_details:
+                st.write(f"**Email du candidat :** {candidate_details['mail']}")
                 
-                    # Envoi de l'email
-                    if send_email(email, email_subject, email_message):
-                        st.success("La recommandation a été envoyée avec succès.")
-                else:
-                    st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
+                # Notation par étoiles
+                sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
+                selected_rating = st.feedback("stars")
+
+                # Saisie du message de recommandation
+                message_body = st.text_area("Message de recommandation")
+
+                # Bouton pour envoyer la recommandation
+                if st.button("Envoyer la recommandation"):
+                    if not selected_rating:
+                        st.warning("Veuillez noter le candidat.")
+                    elif not message_body.strip():
+                        st.warning("Veuillez saisir un message de recommandation.")
+                    else:
+                        # Préparation de l'email
+                        email = candidate_details['mail']
+                        email_subject = f"Recommandation pour {selected_candidate}"
+                        email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating - 1]}.\n\n{message_body}"
+
+                        # Envoi de l'email
+                        if send_email(email, email_subject, email_message):
+                            st.success("La recommandation a été envoyée avec succès.")
+                        #else:
+                            #st.error("Échec de l'envoi de la recommandation.")
+            else:
+                st.error("Candidat non trouvé dans la base de données.")
+
 
     if selected == "Génération de questions d'entretien":
         st.header("Génération de Questions d'Entretien")
