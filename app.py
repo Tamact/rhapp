@@ -190,8 +190,11 @@ def main():
                     st.erro(f"Une erreur s'est produite : {e}")
 
     if selected =="Calculer Similarité":
-
-        cvs_texts = []
+        # Initialiser les variables dans session_state si elles n'existent pas
+        if 'df_results' not in st.session_state:
+            st.session_state['df_results'] = pd.DataFrame()
+        if 'cvs_texts' not in st.session_state:
+            st.session_state['cvs_texts'] = []
 
         st.header("Calcul de similarité entre CVs et offre")
         # Récupérer les CVs et offres d'emploi
@@ -217,11 +220,10 @@ def main():
             help="Sélectionnez les cvs des candidats pour calculer la similarité"  
         )
 
-        
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
                                       help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
         
-                # Ajouter la saisie des compétences avec le modèle de Kano
+        # Ajouter la saisie des compétences avec le modèle de Kano
         competences_utilisateur = []
         st.write("### Saisir les Compétences")
         competence_counter = 0
@@ -235,8 +237,6 @@ def main():
                 competence_counter += 1 
             else:
                 break
-
-        #calculer_similarite(competences_utilisateur)
 
         # Bouton pour calculer la similarité
         if st.button("Calculer la Similarité"):
@@ -257,11 +257,9 @@ def main():
             # Calculer les vecteurs de l'offre
             offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text]), model4.encode([offer_text])], axis=1)
             
-            
             results = []
 
             # Calculer la similarité pour chaque CV sélectionné
-            
             for cv_id in selected_cvs:
                 cv = next(cv for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
                 score_similarite = sum(poids_kano[kano_category] for competence, kano_category in competences_utilisateur if competence in cv['competences'])
@@ -278,47 +276,29 @@ def main():
                     "Nom du CV": cv_id,
                     "Similarité Cosinus": similarity
                 })
-                # Tri des résultats par score de similarité
+
+            # Tri des résultats par score de similarité
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
             
             store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
             store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
-                
 
-            for i, cv_file in enumerate(cv_files):
-                similarity = compute_cosine_similarity(cv_vectors[i], offer_vector)
-                results.append({"Nom du CV": cv_file.name, "Similarité Cosinus": similarity})
-
-            progress_bar = st.progress(0)
-            for perc_completed in range(1, 101):
-                time.sleep(0.01)  
-                progress_bar.progress(perc_completed)
-
-                # Afficher les résultats
+            # Afficher les résultats
             df_results = pd.DataFrame(results)
             st.dataframe(df_results.style.apply(highlight_best_candidates, axis=1))
 
+            # Stocker les résultats dans le session state pour communication
+            st.session_state['df_results'] = df_results
+            st.session_state['cvs_texts'] = cvs_texts
 
             # Afficher le meilleur candidat
             if results:
                 best_candidate = results[0]
                 st.success(f"Le meilleur candidat est {best_candidate['Nom du CV']} avec une similarité de {best_candidate['Similarité Cosinus']:.4f}")
-
-            # Stocker les résultats dans le session state pour communication
+            
+             # Stocker les résultats dans le session state pour communication
             session_state['df_results'] = df_results
             session_state['cvs_texts'] = cvs_texts
-            
-            
-
-            # Stocker les résultats dans le session state pour communication
-            session_state['df_results'] = df_results
-            session_state['cvs_texts'] = cvs_texts
-
-            #st.dataframe(df_results)
-            #pyg.walk(df_results)
-            
-            best_candidate = df_results.iloc[0]
-            st.success(f"Le meilleur candidat est {best_candidate['Nom du CV']} avec une similarité de {best_candidate['Similarité Cosinus']:.4f}")
 
             if 'df_results' in session_state and not session_state['df_results'].empty:
                 df_results = session_state['df_results']
@@ -343,8 +323,7 @@ def main():
                 with col3:
                     st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
                             f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
-                    
-            if 'df_results' in session_state:
+
                 # Section des options de sélection des graphiques
                 with st.form("form_selection_graphiques"):
                     st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
@@ -381,40 +360,40 @@ def main():
 
             # Filtrage par compétences ou résultats 
             
-        if 'df_results' in session_state:
-            st.write("### Filtrer les CVs")
-            with st.expander("Options de Filtrage Avancé"):
-                filter_type = st.selectbox("Choisissez le type de filtrage", ("Compétences", "Résultats"))
+            if 'df_results' in session_state:
+                st.write("### Filtrer les CVs")
+                with st.expander("Options de Filtrage Avancé"):
+                    filter_type = st.selectbox("Choisissez le type de filtrage", ("Compétences", "Résultats"))
 
-                if filter_type == "Compétences":
-                    skills_input = st.text_area("Entrez les compétences à rechercher (séparées par une virgule)", help="Exemple : Python, analyse de données")
-                    skills = [skill.strip() for skill in skills_input.split(",")]
+                    if filter_type == "Compétences":
+                        skills_input = st.text_area("Entrez les compétences à rechercher (séparées par une virgule)", help="Exemple : Python, analyse de données")
+                        skills = [skill.strip() for skill in skills_input.split(",")]
 
-                    if st.button("Filtrer par Compétences"):
-                        if not skills_input.strip():
-                            st.error("Veuillez entrer au moins une compétence.")
-                        else:
+                        if st.button("Filtrer par Compétences"):
+                            if not skills_input.strip():
+                                st.error("Veuillez entrer au moins une compétence.")
+                            else:
+                                df_results = session_state['df_results']
+                                cvs_texts = session_state['cvs_texts']
+
+                                filtered_df = filter_cvs_by_skills(df_results, skills, cvs_texts)
+
+                                if not filtered_df.empty:
+                                    st.dataframe(filtered_df)
+                                    plot_results(filtered_df)
+
+                    elif filter_type == "Résultats":
+                        st.write("Définissez les seuils de filtrage")
+                        cosine_threshold = st.slider("Seuil de Similarité Cosinus", 0.0, 1.0, 0.5)
+                        num_cvs_to_show = st.slider("Nombre de CVs à afficher", 1, len(session_state['df_results']), 5)
+
+                        if st.button("Filtrer par Résultats"):
                             df_results = session_state['df_results']
-                            cvs_texts = session_state['cvs_texts']
-
-                            filtered_df = filter_cvs_by_skills(df_results, skills, cvs_texts)
+                            filtered_df = filter_cvs_by_results(df_results, cosine_threshold, num_cvs_to_show)
 
                             if not filtered_df.empty:
                                 st.dataframe(filtered_df)
                                 plot_results(filtered_df)
-
-                elif filter_type == "Résultats":
-                    st.write("Définissez les seuils de filtrage")
-                    cosine_threshold = st.slider("Seuil de Similarité Cosinus", 0.0, 1.0, 0.5)
-                    num_cvs_to_show = st.slider("Nombre de CVs à afficher", 1, len(session_state['df_results']), 5)
-
-                    if st.button("Filtrer par Résultats"):
-                        df_results = session_state['df_results']
-                        filtered_df = filter_cvs_by_results(df_results, cosine_threshold, num_cvs_to_show)
-
-                        if not filtered_df.empty:
-                            st.dataframe(filtered_df)
-                            plot_results(filtered_df)
 
     elif selected == "Gestion de la base de données":
         st.header("Gestion de la base de données")
