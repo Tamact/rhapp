@@ -67,8 +67,9 @@ load_dotenv()
 #Fonction d'envoi de mails automatiques
 
 def send_email(recipient, subject, message_body):
-    sender = "iss654864@gmail.com"  
-    password = "fjxhsladuowjkygl"  
+    sender = os.getenv("EMAIL_SENDER")
+    password = os.getenv("EMAIL_PASSWORD")
+  
 
     # Création du message de recommandation
    #msg = MIMEText(f"Cher candidat,\n\nVous avez été recommandé pour une opportunité.\n\nCordialement,\nL'équipe de recrutement GTP")
