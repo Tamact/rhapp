@@ -170,3 +170,39 @@ def update_resultat(resultat_id, updated_data):
         WHERE resultat_id = %s;
     '''
     return execute_query(query, (updated_data['cv_id'], updated_data['offre_id'], updated_data['cosine_similarity'], resultat_id))
+
+def create_suivi_candidature(user_id, status="En cours d'examen"):
+    query = '''
+        INSERT INTO suivi_candidatures (user_id, status)
+        VALUES (%s, %s)
+        RETURNING suivi_id;
+    '''
+    return execute_query(query, (user_id, status))
+
+def update_suivi_status(suivi_id, status):
+    query = '''
+        UPDATE suivi_candidatures
+        SET status = %s, last_updated = NOW()
+        WHERE suivi_id = %s;
+    '''
+    return execute_query(query, (status, suivi_id))
+
+def get_suivi_candidatures():
+    query = '''
+        SELECT sc.suivi_id, c.nom, c.prenom, o.titre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN candidat c ON sc.user_id = c.user_id
+        JOIN offre o ON sc.offre_id = o.offre_id
+    '''
+    return execute_query(query, fetch_all=True)
+
+def get_candidature_suivi(user_id):
+    query = '''
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+    '''
+    return execute_query(query, (user_id,), fetch_all=True)
+
+

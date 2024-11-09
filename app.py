@@ -140,6 +140,10 @@ def main():
                             logging.info(f"user_id récupéré avec succès: {user_id}")
                             competences_list = [competence.strip() for competence in competences.split(",")]
                             cv_id = save_to_cv(user_id, preprocessed_cv_text, competences_list)
+                            suivi_id = create_suivi_candidature(user_id)
+                            if suivi_id:
+                                st.write(f"Suivi de candidature créé avec l'ID {suivi_id} pour {nom} {prenom}.")
+
                 
                             if cv_id:
                                 st.success("CV enregistré avec succès.")
@@ -150,7 +154,10 @@ def main():
                     except Exception as e:
                         logging.error(f"Erreur lors de l'enregistrement du CV : {e}")
                         st.error(f"Une erreur s'est produite : {e}")
-        
+
+                        
+                        
+                        
 
     if selected =="Importer Offre":
     #Importer offre
@@ -585,42 +592,61 @@ def main():
             st.error("Aucun candidat trouvé.")
         else:
             # Sélecteur de candidat
-            selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", 
-                                            [f"{c['nom']} {c['prenom']}" for c in candidates])
+            selected_candidate = st.selectbox(
+                "Choisissez un candidat à évaluer :", 
+                [f"{c['nom']} {c['prenom']}" for c in candidates]
+            )
 
-            # Trouver le candidat sélectionné dans la liste
+            # Trouver les détails du candidat sélectionné
             candidate_details = next((c for c in candidates if f"{c['nom']} {c['prenom']}" == selected_candidate), None)
-
+            
             # Vérifier si le candidat a été trouvé
             if candidate_details:
                 st.write(f"**Email du candidat :** {candidate_details['mail']}")
                 
-                # Notation par étoiles
+                # Afficher les suivis de candidature
+                suivi_data = get_candidature_suivi(candidate_details['user_id'])
+                if not suivi_data:
+                    st.info("Aucun suivi de candidature pour ce candidat.")
+                else:
+                    suivi_df = pd.DataFrame(suivi_data, columns=["ID Suivi", "Offre", "Statut", "Dernière Mise à Jour"])
+                    st.dataframe(suivi_df)
+
+                    # Sélection d'un suivi pour mise à jour
+                    suivi_id = st.selectbox("Sélectionnez un suivi à mettre à jour", suivi_df["ID Suivi"])
+
+                    # Nouveau statut pour la candidature
+                    new_status = st.selectbox(
+                        "Nouveau Statut",
+                        ["En cours d'examen", "Entretien programmé", "Refusé", "Accepté"]
+                    )
+
+                    # Bouton de mise à jour du statut
+                    if st.button("Mettre à jour le statut"):
+                        if update_suivi_status(suivi_id, new_status):
+                            st.success("Statut de la candidature mis à jour avec succès.")
+                        else:
+                            st.error("Erreur lors de la mise à jour du statut.")
+
+                # Notation par étoiles pour la recommandation
                 sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
                 selected_rating = st.feedback("stars")
-
                 # Saisie du message de recommandation
                 message_body = st.text_area("Message de recommandation")
 
-            
-            email = "fabricejordan2001@gmail.com"
-            # !test pour avoir le mail du candidat
-            st.write(st.session_state.selected_candidate['mail'])
+                if st.button("Envoyer la recommandation"):
+                    if not selected_rating:
+                        st.warning("Veuillez noter le candidat.")
+                    elif message_body:
+                        email_subject = f"Recommandation pour {selected_candidate}"
+                        email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating - 1]}.\n\n{message_body}"
+                        if send_email(candidate_details['mail'], email_subject, email_message):
+                            st.success("La recommandation a été envoyée avec succès.")
+                        else:
+                            st.error("Erreur lors de l'envoi de l'email.")
+                    else:
+                        st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
 
-            if st.button("Envoyer la recommandation"):
-                if not selected_rating:
-                    st.warning("notez d'abord le candidat")
-                elif message_body:
-                    # Message d'email
-                    email = "fabricejordan2001@gmail.com"
-                    email_subject = f"Recommandation pour {selected_candidate}"
-                    email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}"
-                
-                    # Envoi de l'email
-                    if send_email(email, email_subject, email_message):
-                        st.success("La recommandation a été envoyée avec succès.")
-                else:
-                    st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
 
     if selected == "Génération de questions d'entretien":
         st.header("Génération de Questions d'Entretien")
