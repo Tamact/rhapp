@@ -283,16 +283,11 @@ def main():
                 })
                 # Tri des résultats par score de similarité
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
-            #return results
-            #Stocker vecteur dans la bd qdrant
+            
 
-                #offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1).flatten()
-                #cv_vectors = np.concatenate([model1.encode([cv_text]), model2.encode([cv_text]), model3.encode([cv_text])], axis=1).flatten()
-
-                #store_vectors_in_qdrant(cv_vectors, [cv_file.name for cv_file in cv_files])# Enregistrer les vecteurs dans Qdrant
-                #store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
-                #store_offer_vector_in_qdrant(offer_vector, selected_offer)
-                #store_offer_vector_in_qdrant(offer_vector, [selected_offer])
+            store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
+            store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
+                
 
             for i, cv_file in enumerate(cv_files):
                 similarity = compute_cosine_similarity(cv_vectors[i], offer_vector)
@@ -306,6 +301,7 @@ def main():
                 # Afficher les résultats
             df_results = pd.DataFrame(results)
             st.dataframe(df_results.style.apply(highlight_best_candidates, axis=1))
+
 
             # Afficher le meilleur candidat
             if results:
