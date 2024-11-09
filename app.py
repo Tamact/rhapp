@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questions
+from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questions, find_skills_section, detect_skills
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
 from visualization import *
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
@@ -110,6 +110,11 @@ def main():
 
                         st.markdown(f'<iframe src="data:application/pdf;base64,{base64.b64encode(pdf_data).decode()}" width="700" height="500"></iframe>', unsafe_allow_html=True)
                         cv_text = extract_text_from_pdf(cv_file)
+
+                          # Extraire et afficher les compétences
+                        skills_section = find_skills_section(cv_text)
+                        detected_skills = detect_skills(skills_section)
+                        
             # Enregistrer CVs
             nom = st.text_input("Nom *", placeholder="Entrez votre nom", key="nom", help="Nom du candidat") 
             prenom = st.text_input("Prénom *", placeholder="Entrez votre prénom", key="prenom", help="Prénom du candidat")
