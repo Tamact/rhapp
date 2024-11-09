@@ -10,7 +10,8 @@ from io import StringIO
 import numpy as np
 from database import *
 import time
-
+import asyncio
+from async_operations import process_cvs_async, add_candidate_async
 
 # Définir le thème
 st.set_page_config(
@@ -255,7 +256,8 @@ def main():
 
             # Calculer les vecteurs de l'offre
             offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text]), model4.encode([offer_text])], axis=1)
-
+            
+            
             results = []
 
             # Calculer la similarité pour chaque CV sélectionné
