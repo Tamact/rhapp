@@ -12,6 +12,8 @@ from email.mime.multipart import MIMEMultipart
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from dotenv import load_dotenv
 import os
+import spacy
+
 
 model_name = "t5-large"
 tokenizer = T5Tokenizer.from_pretrained('t5-large', Legacy=False)
@@ -102,3 +104,48 @@ def generate_questions(profile, num_questions=10):
     questions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
     return questions
 
+# Charger le modèle NLP de spaCy
+nlp = spacy.load("en_core_web_sm")
+
+# Liste de mots-clés pour identifier la section des compétences
+SECTION_KEYWORDS = ["skills", "compétences", "qualifications", "expertise", "technologies"]
+
+def extract_text_from_pdf(file):
+    """Extraire le texte brut du PDF."""
+    try:
+        text = extract_text(file)
+        return text
+    except Exception as e:
+        st.error(f"Erreur lors de l'extraction du texte : {str(e)}")
+        return ""
+
+def find_skills_section(cv_text):
+    """
+    Détecter la section des compétences en utilisant des mots-clés et des expressions régulières.
+    Retourne le texte supposé de la section compétences.
+    """
+    # Construire une expression régulière avec les mots-clés de section
+    section_pattern = re.compile(rf"({'|'.join(SECTION_KEYWORDS)})(.*?)(\n\n|\Z)", re.IGNORECASE | re.DOTALL)
+    skills_section = ""
+    
+    # Chercher la section compétences
+    matches = section_pattern.findall(cv_text)
+    if matches:
+        # Récupérer le texte correspondant à la première section de compétences trouvée
+        skills_section = matches[0][1]
+    return skills_section
+
+def detect_skills(cv_text):
+    """
+    Extraire les compétences à partir du texte en utilisant NLP et des filtres de mots-clés.
+    """
+    doc = nlp(cv_text)
+    skills = []
+
+    # Détecter les compétences en utilisant les entités nommées de spaCy et d'autres règles
+    for ent in doc.ents:
+        if ent.label_ in ['ORG', 'PRODUCT', 'WORK_OF_ART', 'SKILL', 'LANGUAGE']:
+            skills.append(ent.text)
+
+    # Filtrer les doublons et retourner une liste de compétences uniques
+    return list(set(skills))
