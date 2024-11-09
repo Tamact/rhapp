@@ -1,4 +1,5 @@
 import asyncio
+import os
 import asyncpg
 import numpy as np
 from data_processing import compute_cosine_similarity
@@ -8,11 +9,11 @@ async def connect_to_db():
     """Établit une connexion asynchrone à la base de données."""
     try:
         conn = await asyncpg.connect(
-            database="your_db_name",
-            user="your_db_user",
-            password="your_db_password",
-            host="your_db_host",
-            port="your_db_port"
+            dbname=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT")
         )
         return conn
     except Exception as e:
