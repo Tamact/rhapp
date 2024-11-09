@@ -10,6 +10,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from transformers import T5Tokenizer, T5ForConditionalGeneration
+from dotenv import load_dotenv
+import os
 
 model_name = "t5-large"
 tokenizer = T5Tokenizer.from_pretrained(model_name)
@@ -57,6 +59,10 @@ def set_app_theme():
             /* Ajoutez d'autres styles ici si nécessaire */
         </style>
     """, unsafe_allow_html=True)
+
+
+# Charger les variables d'environnement
+load_dotenv()
 
 #Fonction d'envoi de mails automatiques
 

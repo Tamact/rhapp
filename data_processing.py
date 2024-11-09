@@ -4,10 +4,15 @@ import uuid
 import numpy as np
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configurer Qdrant API
-os.environ['QDRANT_HOST'] = "https://5ab76626-81f8-42db-b56f-f23928129cce.europe-west3-0.gcp.cloud.qdrant.io:6333"
-os.environ['QDRANT_API_KEY'] = "GToQ0tM7oryP7zOxTO_P5eeftQW0UErJCYOh1wrhInH4HRlOSscewQ"
+#os.environ['QDRANT_HOST'] = "https://5ab76626-81f8-42db-b56f-f23928129cce.europe-west3-0.gcp.cloud.qdrant.io:6333"
+#os.environ['QDRANT_API_KEY'] = "GToQ0tM7oryP7zOxTO_P5eeftQW0UErJCYOh1wrhInH4HRlOSscewQ"
 
 # Initialiser Qdrant client
 client = QdrantClient(

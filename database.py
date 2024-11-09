@@ -1,14 +1,20 @@
 import psycopg2
 from psycopg2 import sql
+from dotenv import load_dotenv
+import os
 
-# Fonction pour établir une connexion à la base de données
+
+# Charger les variables d'environnement
+load_dotenv()
+
+# Utiliser les variables d'environnement
 def connect_to_db():
     return psycopg2.connect(
-        dbname="rh",
-        user="postgres",
-        password="azerty12",
-        host="localhost",
-        port="5432"
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT")
     )
 
 def save_to_user(nom, prenom, mail, numero_tlfn):
