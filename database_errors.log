@@ -1,0 +1,16 @@
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  une instruction insert ou update sur la table « cv » viole la contrainte de clé
+étrangère « cv_user_id_fkey »
+DETAIL:  La clé (user_id)=(150) n'est pas présente dans la table « candidat ».
+
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  une instruction insert ou update sur la table « cv » viole la contrainte de clé
+étrangère « cv_user_id_fkey »
+DETAIL:  La clé (user_id)=(151) n'est pas présente dans la table « candidat ».
+
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  une instruction insert ou update sur la table « cv » viole la contrainte de clé
+étrangère « cv_user_id_fkey »
+DETAIL:  La clé (user_id)=(152) n'est pas présente dans la table « candidat ».
+ - Query: 
+        INSERT INTO "cv" (user_id, date_insertion, cv_text, competences)
+        VALUES (%s, NOW(), %s, %s)
+        RETURNING cv_id;
+     - Params: (152, 'mamadou saliou diallo étudiantarts graphiques numériques e q 782600519 linkedin portfolio thiernosaliou74 gmail com keur massar éducation 2023 présent 2021 2022 2016 2017 licence arts graphiques numériques université virtuelle cheikh ahmidou kane sénégal baccalauréat série l2 lycée privée laïque cherif limane aidara yeumbeul brevet fin études moyen bfem cem keur massar 2 compétences adobe premier pro animation 2d adobe after e\ufb00ect adobe illustrator cinema 3d 4d photoshop typographie word langues wolof langue maternelle anglais avancé www enhancv com peulh langue maternelle espagnol avancé français compétent propulsé', [''])

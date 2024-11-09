@@ -14,8 +14,8 @@ from dotenv import load_dotenv
 import os
 
 model_name = "t5-large"
-tokenizer = T5Tokenizer.from_pretrained(model_name)
-model = T5ForConditionalGeneration.from_pretrained(model_name)
+tokenizer = T5Tokenizer.from_pretrained('t5-large', Legacy=False)
+model = T5ForConditionalGeneration.from_pretrained('t5-large')
 
 @st.cache_resource
 def get_stop_words():

@@ -125,11 +125,13 @@ def main():
                     st.error("Veuillez entrer une adresse e-mail valide.")
                 else:
                     try:
+                        
                         preprocessed_cv_text = preprocess_text(cv_text)
                         # Enregistrement des informations de l'utilisateur
                         user_id = save_to_user(nom, prenom, mail, numero_tlfn)
 
                         if user_id:  
+                            logging.info(f"user_id récupéré avec succès: {user_id}")
                             competences_list = [competence.strip() for competence in competences.split(",")]
                             cv_id = save_to_cv(user_id, preprocessed_cv_text, competences_list)
                 
@@ -140,6 +142,7 @@ def main():
                         else:
                             st.error("Erreur lors de l'enregistrement du candidat.")
                     except Exception as e:
+                        logging.error(f"Erreur lors de l'enregistrement du CV : {e}")
                         st.error(f"Une erreur s'est produite : {e}")
         
 
