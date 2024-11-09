@@ -586,9 +586,32 @@ def main():
             # Trouver le candidat sélectionné dans la liste
             candidate_details = next((c for c in candidates if f"{c['nom']} {c['prenom']}" == selected_candidate), None)
 
+<<<<<<< HEAD
             # Vérifier si le candidat a été trouvé
             if candidate_details:
                 st.write(f"**Email du candidat :** {candidate_details['mail']}")
+=======
+            # Notation par étoiles
+            sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
+            selected_rating = st.feedback("stars")
+
+            # Saisie du message de recommandation
+            message_body = st.text_area("Message de recommandation")
+
+            
+            email = "fabricejordan2001@gmail.com"
+            # !test pour avoir le mail du candidat
+            # st.write(st.session_state.selected_candidate['mail'])
+
+            if st.button("Envoyer la recommandation"):
+                if not selected_rating:
+                    st.warning("notez d'abord le candidat")
+                elif message_body:
+                    # Message d'email
+                    email = "fabricejordan2001@gmail.com"
+                    email_subject = f"Recommandation pour {selected_candidate}"
+                    email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}"
+>>>>>>> b8692ed20dd0596fe97c7fffd9b4bbb6c3c7f86b
                 
                 # Notation par étoiles
                 sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
