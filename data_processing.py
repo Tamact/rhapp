@@ -4,10 +4,15 @@ import uuid
 import numpy as np
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configurer Qdrant API
-os.environ['QDRANT_HOST'] = "https://5ab76626-81f8-42db-b56f-f23928129cce.europe-west3-0.gcp.cloud.qdrant.io:6333"
-os.environ['QDRANT_API_KEY'] = "GToQ0tM7oryP7zOxTO_P5eeftQW0UErJCYOh1wrhInH4HRlOSscewQ"
+#os.environ['QDRANT_HOST'] = "https://5ab76626-81f8-42db-b56f-f23928129cce.europe-west3-0.gcp.cloud.qdrant.io:6333"
+#os.environ['QDRANT_API_KEY'] = "GToQ0tM7oryP7zOxTO_P5eeftQW0UErJCYOh1wrhInH4HRlOSscewQ"
 
 # Initialiser Qdrant client
 client = QdrantClient(
@@ -26,7 +31,8 @@ def store_vectors_in_qdrant(vectors, names):
         for name, vector in zip(names, vectors)
     ]
     try:
-        client.upsert(collection_name="cvs_collection5", points=points)
+        client.upsert(collection_name="cv_collection99", points=points)
+        st.success("Vecteurs de CVs stockés avec succès dans Qdrant.")
     except Exception as e:
         st.error(f"Erreur lors du stockage des vecteurs : {str(e)}")
 
@@ -49,7 +55,7 @@ def store_offer_vector_in_qdrant(offer_vector, offer_name):
 
     try:
         client.upsert(
-            collection_name="offers_collection5",
+            collection_name="offer_collection99",
             points=[point]
         )
         st.success("Vecteur de l'offre d'emploi stocké avec succès dans Qdrant.")
@@ -61,12 +67,14 @@ def load_models():
     model1 = SentenceTransformer('all-MPNet-base-v2')
     model2 = SentenceTransformer('paraphrase-MiniLM-L12-v2')
     model3 = SentenceTransformer('all-MiniLM-L12-v2')
-    return model1, model2, model3
+    model4 = SentenceTransformer('bert-base-nli-mean-tokens')
+    return model1, model2, model3, model4
 
-model1, model2, model3 = load_models()
+model1, model2, model3, model4 = load_models()
 
 def highlight_best_candidates(row):
-    """Met en évidence les meilleurs candidats."""
-    return ['background-color: #E1AD01' if row['Similarité Cosinus'] > 0.7 else '' for _ in row]
+    """Met en évidence les meilleurs candidats en fonction de la similarité cosinus."""
+    color = '#E1AD01' if row['Similarité Cosinus'] > 0.7 else ''
+    return ['background-color: {}'.format(color) if col == 'Similarité Cosinus' else '' for col in row.index]
 
 
