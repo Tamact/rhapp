@@ -10,10 +10,12 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from transformers import T5Tokenizer, T5ForConditionalGeneration
+from dotenv import load_dotenv
+import os
 
 model_name = "t5-large"
-tokenizer = T5Tokenizer.from_pretrained(model_name)
-model = T5ForConditionalGeneration.from_pretrained(model_name)
+tokenizer = T5Tokenizer.from_pretrained('t5-large', Legacy=False)
+model = T5ForConditionalGeneration.from_pretrained('t5-large')
 
 @st.cache_resource
 def get_stop_words():
@@ -58,15 +60,16 @@ def set_app_theme():
         </style>
     """, unsafe_allow_html=True)
 
+
+# Charger les variables d'environnement
+load_dotenv()
+
 #Fonction d'envoi de mails automatiques
 
 def send_email(recipient, subject, message_body):
-    sender = "iss654864@gmail.com"  
-    password = "fjxhsladuowjkygl"  
+    sender = os.getenv("EMAIL_SENDER")
+    password = os.getenv("EMAIL_PASSWORD")
 
-    # Création du message de recommandation
-   #msg = MIMEText(f"Cher candidat,\n\nVous avez été recommandé pour une opportunité.\n\nCordialement,\nL'équipe de recrutement GTP")
-    #msg = MIMEText(message_body ,_charset="utf-8")
     msg = MIMEMultipart()
     msg['Subject'] = subject 
     msg['From'] = sender
@@ -74,14 +77,18 @@ def send_email(recipient, subject, message_body):
     msg.attach(MIMEText(message_body, 'plain', 'utf-8'))
 
     try:
-        # Initialisation du serveur SMTP
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:  
-            server.starttls()  
-            server.login(sender, password) 
-            server.send_message(msg)  
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender, password)
+            server.send_message(msg)
         st.success("E-mail envoyé avec succès!")
+    except smtplib.SMTPAuthenticationError:
+        st.error("Erreur d'authentification SMTP : vérifiez les identifiants.")
+    except smtplib.SMTPConnectError:
+        st.error("Erreur de connexion SMTP : vérifiez la connexion au serveur SMTP.")
     except Exception as e:
-        st.error(f"Erreur lors de l'envoi de l'e-mail: {str(e)}")
+        st.error(f"Erreur lors de l'envoi de l'e-mail : {str(e)}")
+
 
 def generate_questions(profile, num_questions=10):
     

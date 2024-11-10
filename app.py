@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questions
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
-from visualization import plot_results, plot_pie_chart
+from visualization import *
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
 from io import StringIO
@@ -12,6 +12,9 @@ from database import *
 import time
 from PIL import Image
 img = Image.open("favicon.png")
+import asyncio
+from async_operations import process_cvs_async, add_candidate_async
+
 # Définir le thème
 st.set_page_config(
     page_title="GTP",
@@ -125,11 +128,13 @@ def main():
                     st.error("Veuillez entrer une adresse e-mail valide.")
                 else:
                     try:
+                        
                         preprocessed_cv_text = preprocess_text(cv_text)
                         # Enregistrement des informations de l'utilisateur
                         user_id = save_to_user(nom, prenom, mail, numero_tlfn)
 
                         if user_id:  
+                            logging.info(f"user_id récupéré avec succès: {user_id}")
                             competences_list = [competence.strip() for competence in competences.split(",")]
                             cv_id = save_to_cv(user_id, preprocessed_cv_text, competences_list)
                 
@@ -140,6 +145,7 @@ def main():
                         else:
                             st.error("Erreur lors de l'enregistrement du candidat.")
                     except Exception as e:
+                        logging.error(f"Erreur lors de l'enregistrement du CV : {e}")
                         st.error(f"Une erreur s'est produite : {e}")
         
 
@@ -186,8 +192,11 @@ def main():
                     st.erro(f"Une erreur s'est produite : {e}")
 
     if selected =="Calculer Similarité":
-
-        cvs_texts = []
+        # Initialiser les variables dans session_state si elles n'existent pas
+        if 'df_results' not in st.session_state:
+            st.session_state['df_results'] = pd.DataFrame()
+        if 'cvs_texts' not in st.session_state:
+            st.session_state['cvs_texts'] = []
 
         st.header("Calcul de similarité entre CVs et offre")
         # Récupérer les CVs et offres d'emploi
@@ -213,11 +222,10 @@ def main():
             help="Sélectionnez les cvs des candidats pour calculer la similarité"  
         )
 
-        
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
                                       help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
         
-                # Ajouter la saisie des compétences avec le modèle de Kano
+        # Ajouter la saisie des compétences avec le modèle de Kano
         competences_utilisateur = []
         st.write("### Saisir les Compétences")
         competence_counter = 0
@@ -231,8 +239,6 @@ def main():
                 competence_counter += 1 
             else:
                 break
-
-        #calculer_similarite(competences_utilisateur)
 
         # Bouton pour calculer la similarité
         if st.button("Calculer la Similarité"):
@@ -252,18 +258,14 @@ def main():
 
             # Calculer les vecteurs de l'offre
             offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text]), model4.encode([offer_text])], axis=1)
-
+            
             results = []
 
             # Calculer la similarité pour chaque CV sélectionné
             for cv_id in selected_cvs:
                 cv = next(cv for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
-                score_similarite = 0
-
-                for competence, kano_category in competences_utilisateur:
-                    if competence in cv['competences']:  # Vérifiez si la compétence est présente dans le CV
-                        score_similarite += poids_kano[kano_category]  # Ajoutez le poids selon la catégorie Kano
-                score_similarite = min(score_similarite, 1)  
+                score_similarite = sum(poids_kano[kano_category] for competence, kano_category in competences_utilisateur if competence in cv['competences'])
+                score_similarite = min(score_similarite, 1)   
 
                 # Calculer les vecteurs des CVs 
                 cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']]), model4.encode([cv['cv_text']])], axis=1)
@@ -276,116 +278,124 @@ def main():
                     "Nom du CV": cv_id,
                     "Similarité Cosinus": similarity
                 })
-                # Tri des résultats par score de similarité
+
+            # Tri des résultats par score de similarité
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
-            #return results
-            #Stocker vecteur dans la bd qdrant
+            
+            store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
+            store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
 
-                #offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1).flatten()
-                #cv_vectors = np.concatenate([model1.encode([cv_text]), model2.encode([cv_text]), model3.encode([cv_text])], axis=1).flatten()
-
-                #store_vectors_in_qdrant(cv_vectors, [cv_file.name for cv_file in cv_files])# Enregistrer les vecteurs dans Qdrant
-                #store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
-                #store_offer_vector_in_qdrant(offer_vector, selected_offer)
-                #store_offer_vector_in_qdrant(offer_vector, [selected_offer])
-
-            for i, cv_file in enumerate(cv_files):
-                similarity = compute_cosine_similarity(cv_vectors[i], offer_vector)
-                results.append({"Nom du CV": cv_file.name, "Similarité Cosinus": similarity})
-
-            progress_bar = st.progress(0)
-            for perc_completed in range(1, 101):
-                time.sleep(0.01)  
-                progress_bar.progress(perc_completed)
-
-                # Afficher les résultats
+            # Afficher les résultats
             df_results = pd.DataFrame(results)
             st.dataframe(df_results.style.apply(highlight_best_candidates, axis=1))
+
+            # Stocker les résultats dans le session state pour communication
+            st.session_state['df_results'] = df_results
+            st.session_state['cvs_texts'] = cvs_texts
 
             # Afficher le meilleur candidat
             if results:
                 best_candidate = results[0]
                 st.success(f"Le meilleur candidat est {best_candidate['Nom du CV']} avec une similarité de {best_candidate['Similarité Cosinus']:.4f}")
-
-            # Stocker les résultats dans le session state pour communication
-            session_state['df_results'] = df_results
-            session_state['cvs_texts'] = cvs_texts
             
-            
-
-            # Stocker les résultats dans le session state pour communication
+             # Stocker les résultats dans le session state pour communication
             session_state['df_results'] = df_results
             session_state['cvs_texts'] = cvs_texts
 
-            #st.dataframe(df_results)
-            #pyg.walk(df_results)
-            
-            best_candidate = df_results.iloc[0]
-            st.success(f"Le meilleur candidat est {best_candidate['Nom du CV']} avec une similarité de {best_candidate['Similarité Cosinus']:.4f}")
-
-            if 'df_results' in session_state:
+            if 'df_results' in session_state and not session_state['df_results'].empty:
+                df_results = session_state['df_results']
             
                 st.write("### Tableau de Bord")
 
-        # Calcul des métriques
-            total_cvs = len(session_state['df_results'])
-            max_similarity = session_state['df_results']['Similarité Cosinus'].max()
-            best_candidates_percentage = (len(session_state['df_results'][session_state['df_results']['Similarité Cosinus'] > 0.7]) / total_cvs) * 100 if total_cvs > 0 else 0
+                # Calcul des métriques
+                total_cvs = len(session_state['df_results'])
+                max_similarity = session_state['df_results']['Similarité Cosinus'].max()
+                best_candidates_percentage = (len(session_state['df_results'][session_state['df_results']['Similarité Cosinus'] > 0.7]) / total_cvs) * 100 if total_cvs > 0 else 0
 
-            col1, col2, col3 = st.columns(3)
-        
-            with col1:
-                st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
-                            f"<h3>Total CVs Importés</h3><h2>{total_cvs}</h2></div>", unsafe_allow_html=True)
-        
-            with col2:
-                st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
-                        f"<h3>Plus Grande Similarité</h3><h2>{max_similarity:.4f}</h2></div>", unsafe_allow_html=True)
-        
-            with col3:
-                st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
-                        f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
+                col1, col2, col3 = st.columns(3)
+            
+                with col1:
+                    st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
+                                f"<h3>Total CVs Importés</h3><h2>{total_cvs}</h2></div>", unsafe_allow_html=True)
+            
+                with col2:
+                    st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
+                            f"<h3>Plus Grande Similarité</h3><h2>{max_similarity:.4f}</h2></div>", unsafe_allow_html=True)
+            
+                with col3:
+                    st.markdown(f"<div style='border: 2px solid #E1AD01; padding: 10px; border-radius: 5px;'>"
+                            f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
 
-            plot_results(df_results)
+                # Section des options de sélection des graphiques
+                with st.form("form_selection_graphiques"):
+                    st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
+                    
+                    # Cases à cocher pour les graphiques
+                    show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
+                    show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
+                    show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
+                    show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
+                    show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
+                    show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
+                    show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
+                    
+                    # Bouton de validation du formulaire
+                    submitted = st.form_submit_button("Afficher les graphiques")
 
-            plot_pie_chart(df_results)
+                # Afficher les graphiques sélectionnés uniquement après validation du formulaire
+                if submitted and not df_results.empty:
+                    if show_bar_chart:
+                        plot_results(df_results)
+                    if show_pie_chart:
+                        plot_pie_chart(df_results)
+                    if show_histogram:
+                        plot_similarity_histogram(df_results)
+                    if show_cumulative_line:
+                        plot_cumulative_similarity(df_results)
+                    if show_scatter_plot:
+                        plot_similarity_scatter(df_results)
+                    if show_boxplot:
+                        plot_similarity_boxplot(df_results)
+                    if show_stacked_bar:
+                        plot_stacked_bar_competences(df_results)
 
-        # Filtrage par compétences ou résultats 
-        
-        if 'df_results' in session_state:
-            st.write("### Filtrer les CVs")
-            with st.expander("Options de Filtrage Avancé"):
-                filter_type = st.selectbox("Choisissez le type de filtrage", ("Compétences", "Résultats"))
 
-                if filter_type == "Compétences":
-                    skills_input = st.text_area("Entrez les compétences à rechercher (séparées par une virgule)", help="Exemple : Python, analyse de données")
-                    skills = [skill.strip() for skill in skills_input.split(",")]
+            # Filtrage par compétences ou résultats 
+            
+            if 'df_results' in session_state:
+                st.write("### Filtrer les CVs")
+                with st.expander("Options de Filtrage Avancé"):
+                    filter_type = st.selectbox("Choisissez le type de filtrage", ("Compétences", "Résultats"))
 
-                    if st.button("Filtrer par Compétences"):
-                        if not skills_input.strip():
-                            st.error("Veuillez entrer au moins une compétence.")
-                        else:
+                    if filter_type == "Compétences":
+                        skills_input = st.text_area("Entrez les compétences à rechercher (séparées par une virgule)", help="Exemple : Python, analyse de données")
+                        skills = [skill.strip() for skill in skills_input.split(",")]
+
+                        if st.button("Filtrer par Compétences"):
+                            if not skills_input.strip():
+                                st.error("Veuillez entrer au moins une compétence.")
+                            else:
+                                df_results = session_state['df_results']
+                                cvs_texts = session_state['cvs_texts']
+
+                                filtered_df = filter_cvs_by_skills(df_results, skills, cvs_texts)
+
+                                if not filtered_df.empty:
+                                    st.dataframe(filtered_df)
+                                    plot_results(filtered_df)
+
+                    elif filter_type == "Résultats":
+                        st.write("Définissez les seuils de filtrage")
+                        cosine_threshold = st.slider("Seuil de Similarité Cosinus", 0.0, 1.0, 0.5)
+                        num_cvs_to_show = st.slider("Nombre de CVs à afficher", 1, len(session_state['df_results']), 5)
+
+                        if st.button("Filtrer par Résultats"):
                             df_results = session_state['df_results']
-                            cvs_texts = session_state['cvs_texts']
-
-                            filtered_df = filter_cvs_by_skills(df_results, skills, cvs_texts)
+                            filtered_df = filter_cvs_by_results(df_results, cosine_threshold, num_cvs_to_show)
 
                             if not filtered_df.empty:
                                 st.dataframe(filtered_df)
                                 plot_results(filtered_df)
-
-                elif filter_type == "Résultats":
-                    st.write("Définissez les seuils de filtrage")
-                    cosine_threshold = st.slider("Seuil de Similarité Cosinus", 0.0, 1.0, 0.5)
-                    num_cvs_to_show = st.slider("Nombre de CVs à afficher", 1, len(session_state['df_results']), 5)
-
-                    if st.button("Filtrer par Résultats"):
-                        df_results = session_state['df_results']
-                        filtered_df = filter_cvs_by_results(df_results, cosine_threshold, num_cvs_to_show)
-
-                        if not filtered_df.empty:
-                            st.dataframe(filtered_df)
-                            plot_results(filtered_df)
 
     elif selected == "Gestion de la base de données":
         st.header("Gestion de la base de données")
@@ -517,7 +527,6 @@ def main():
                 text_offre = st.text_area("text_offre", st.session_state.selected_offre["text_offre"], key="textOffre_input", height=300)
                 
                 # Bouton pour enregistrer les modifications
-    
                 if st.button("Enregistrer les modifications"):
                     updated_data = {
                         "titre": titre,
@@ -568,24 +577,31 @@ def main():
 
         # Récupérer la liste des candidats
         candidates = get_all_candidates()
+        if not candidates:
+            st.error("Aucun candidat trouvé.")
+        else:
+            # Sélecteur de candidat
+            selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", 
+                                            [f"{c['nom']} {c['prenom']}" for c in candidates])
 
-        if "selected_candidate" not in  st.session_state:
-            # Sélectionner un candidat
-            st.session_state.selected_candidate = None
-            #selected_candidate = st.session_state.selected_candidate
-            selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", candidates)
+            # Trouver le candidat sélectionné dans la liste
+            candidate_details = next((c for c in candidates if f"{c['nom']} {c['prenom']}" == selected_candidate), None)
 
-            # Notation par étoiles
-            sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
-            selected_rating = st.feedback("stars")
+            # Vérifier si le candidat a été trouvé
+            if candidate_details:
+                st.write(f"**Email du candidat :** {candidate_details['mail']}")
+                
+                # Notation par étoiles
+                sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
+                selected_rating = st.feedback("stars")
 
-            # Saisie du message de recommandation
-            message_body = st.text_area("Message de recommandation")
+                # Saisie du message de recommandation
+                message_body = st.text_area("Message de recommandation")
 
             
             email = "fabricejordan2001@gmail.com"
             # !test pour avoir le mail du candidat
-            # st.write(st.session_state.selected_candidate['mail'])
+            st.write(st.session_state.selected_candidate['mail'])
 
             if st.button("Envoyer la recommandation"):
                 if not selected_rating:
