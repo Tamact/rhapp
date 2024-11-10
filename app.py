@@ -10,13 +10,15 @@ from io import StringIO
 import numpy as np
 from database import *
 import time
+from PIL import Image
+img = Image.open("favicon.png")
 import asyncio
 from async_operations import process_cvs_async, add_candidate_async
 
 # Définir le thème
 st.set_page_config(
     page_title="GTP",
-    page_icon="",
+    page_icon=img,
     layout="wide",
     initial_sidebar_state="auto",
 )
