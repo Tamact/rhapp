@@ -10,12 +10,12 @@ from io import StringIO
 import numpy as np
 from database import *
 import time
-
-
+from PIL import Image
+img = Image.open("favicon.png")
 # Définir le thème
 st.set_page_config(
     page_title="GTP",
-    page_icon="",
+    page_icon=img,
     layout="wide",
     initial_sidebar_state="auto",
 )
