@@ -72,3 +72,29 @@ LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+ERROR:root:Connexion à la base de données échouée.
