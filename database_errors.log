@@ -1,54 +1,54 @@
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  une instruction insert ou update sur la table « cv » viole la contrainte de clé
-étrangère « cv_user_id_fkey »
-DETAIL:  La clé (user_id)=(150) n'est pas présente dans la table « candidat ».
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  une instruction insert ou update sur la table ï¿½ cv ï¿½ viole la contrainte de clï¿½
+ï¿½trangï¿½re ï¿½ cv_user_id_fkey ï¿½
+DETAIL:  La clï¿½ (user_id)=(150) n'est pas prï¿½sente dans la table ï¿½ candidat ï¿½.
 
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  une instruction insert ou update sur la table « cv » viole la contrainte de clé
-étrangère « cv_user_id_fkey »
-DETAIL:  La clé (user_id)=(151) n'est pas présente dans la table « candidat ».
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  une instruction insert ou update sur la table ï¿½ cv ï¿½ viole la contrainte de clï¿½
+ï¿½trangï¿½re ï¿½ cv_user_id_fkey ï¿½
+DETAIL:  La clï¿½ (user_id)=(151) n'est pas prï¿½sente dans la table ï¿½ candidat ï¿½.
 
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  une instruction insert ou update sur la table « cv » viole la contrainte de clé
-étrangère « cv_user_id_fkey »
-DETAIL:  La clé (user_id)=(152) n'est pas présente dans la table « candidat ».
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  une instruction insert ou update sur la table ï¿½ cv ï¿½ viole la contrainte de clï¿½
+ï¿½trangï¿½re ï¿½ cv_user_id_fkey ï¿½
+DETAIL:  La clï¿½ (user_id)=(152) n'est pas prï¿½sente dans la table ï¿½ candidat ï¿½.
  - Query: 
         INSERT INTO "cv" (user_id, date_insertion, cv_text, competences)
         VALUES (%s, NOW(), %s, %s)
         RETURNING cv_id;
-     - Params: (152, 'mamadou saliou diallo étudiantarts graphiques numériques e q 782600519 linkedin portfolio thiernosaliou74 gmail com keur massar éducation 2023 présent 2021 2022 2016 2017 licence arts graphiques numériques université virtuelle cheikh ahmidou kane sénégal baccalauréat série l2 lycée privée laïque cherif limane aidara yeumbeul brevet fin études moyen bfem cem keur massar 2 compétences adobe premier pro animation 2d adobe after e\ufb00ect adobe illustrator cinema 3d 4d photoshop typographie word langues wolof langue maternelle anglais avancé www enhancv com peulh langue maternelle espagnol avancé français compétent propulsé', [''])
+     - Params: (152, 'mamadou saliou diallo ï¿½tudiantarts graphiques numï¿½riques e q 782600519 linkedin portfolio thiernosaliou74 gmail com keur massar ï¿½ducation 2023 prï¿½sent 2021 2022 2016 2017 licence arts graphiques numï¿½riques universitï¿½ virtuelle cheikh ahmidou kane sï¿½nï¿½gal baccalaurï¿½at sï¿½rie l2 lycï¿½e privï¿½e laï¿½que cherif limane aidara yeumbeul brevet fin ï¿½tudes moyen bfem cem keur massar 2 compï¿½tences adobe premier pro animation 2d adobe after e\ufb00ect adobe illustrator cinema 3d 4d photoshop typographie word langues wolof langue maternelle anglais avancï¿½ www enhancv com peulh langue maternelle espagnol avancï¿½ franï¿½ais compï¿½tent propulsï¿½', [''])
 ERROR:root:Erreur lors de l'enregistrement du CV : cannot access local variable 'offre_id' where it is not associated with a value
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (133,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (156,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (157,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
@@ -56,7 +56,7 @@ HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
         WHERE sc.user_id = %s;
      - Params: (157,)
 ERROR:root:Erreur lors de l'enregistrement du CV : save_to_user() missing 1 required positional argument: 'profil'
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne cv.profil n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne cv.profil n'existe pas
 LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
                                                               ^
  - Query: 
@@ -64,7 +64,7 @@ LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne cv.profil n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne cv.profil n'existe pas
 LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
                                                               ^
  - Query: 
@@ -72,135 +72,135 @@ LINE 2: ...xt, candidat.nom, candidat.prenom, cv.competences, cv.profil
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retournï¿½.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retournï¿½.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
-ERROR:root:Connexion à la base de données échouée.
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  syntaxe en entrée invalide pour le type numeric : « 778634567U »
-LINE 3: ...ané', 'Ibrahim', 'ibrahimasorysane986@gmail.com', '778634567...
+ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  syntaxe en entrï¿½e invalide pour le type numeric : ï¿½ 778634567U ï¿½
+LINE 3: ...anï¿½', 'Ibrahim', 'ibrahimasorysane986@gmail.com', '778634567...
                                                              ^
  - Query: 
         INSERT INTO "candidat" (nom, prenom, mail, numero_tlfn, profil)
         VALUES (%s, %s, %s, %s, %s)
         RETURNING user_id;
-     - Params: ('Sané', 'Ibrahim', 'ibrahimasorysane986@gmail.com', '778634567U', 'data scientist')
-ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+     - Params: ('Sanï¿½', 'Ibrahim', 'ibrahimasorysane986@gmail.com', '778634567U', 'data scientist')
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retournï¿½.
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (133,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (142,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (142,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (142,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (153,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (154,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (132,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (145,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc
         JOIN offre o ON sc.offre_id = o.offre_id
         WHERE sc.user_id = %s;
      - Params: (145,)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne sc.offre_id n'existe pas
 LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
                                 ^
-HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+HINT:  Peut-ï¿½tre que vous souhaitiez rï¿½fï¿½rencer la colonne ï¿½ o.offre_id ï¿½.
  - Query: 
         SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
         FROM suivi_candidatures sc

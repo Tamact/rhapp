@@ -171,38 +171,16 @@ def update_resultat(resultat_id, updated_data):
     '''
     return execute_query(query, (updated_data['cv_id'], updated_data['offre_id'], updated_data['cosine_similarity'], resultat_id))
 
-def create_suivi_candidature(user_id, status="En cours d'examen"):
+def generate_code(mail, code):
+    """Met à jour la colonne 'code' pour l'utilisateur spécifié par son email."""
     query = '''
-        INSERT INTO suivi_candidatures (user_id, status)
-        VALUES (%s, %s)
-        RETURNING suivi_id;
+        UPDATE "candidat"
+        SET code = %s
+        WHERE mail = %s;
     '''
-    return execute_query(query, (user_id, status))
-
-def update_suivi_status(suivi_id, status):
-    query = '''
-        UPDATE suivi_candidatures
-        SET status = %s, last_updated = NOW()
-        WHERE suivi_id = %s;
-    '''
-    return execute_query(query, (status, suivi_id))
-
-def get_suivi_candidatures():
-    query = '''
-        SELECT sc.suivi_id, c.nom, c.prenom, o.titre, sc.status, sc.last_updated
-        FROM suivi_candidatures sc
-        JOIN candidat c ON sc.user_id = c.user_id
-        JOIN offre o ON sc.offre_id = o.offre_id
-    '''
-    return execute_query(query, fetch_all=True)
-
-def get_candidature_suivi(user_id):
-    query = '''
-        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
-        FROM suivi_candidatures sc
-        JOIN offre o ON sc.offre_id = o.offre_id
-        WHERE sc.user_id = %s;
-    '''
-    return execute_query(query, (user_id,), fetch_all=True)
-
-
+    result = execute_query(query, (code, mail))
+    if result is None:
+        logging.error(f"Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : {mail}")
+        return False
+    logging.info(f"Code mis à jour avec succès pour l'utilisateur avec l'email : {mail}")
+    return True
