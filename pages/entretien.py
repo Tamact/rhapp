@@ -1,59 +1,62 @@
 import streamlit as st
-import app 
-from utils import is_valid_email 
-import streamlit.components.v1 as components
+from utils import is_valid_email, set_app_theme
+from PIL import Image
+
+img = Image.open("favicon.png")
+
 st.set_page_config(
-    page_title="GTP",
-    page_icon=app.img,
+    page_title="GTP-Interview",
+    page_icon=img,
     layout="wide",
     initial_sidebar_state="auto",
 )
 
-app.set_app_theme()
-st.header(
-    "Page d\'entretien"
-)
+set_app_theme()
 
-Title = st.markdown("<h1 style='text-align: center; color: #E1AD01;'>Bienvenue sur la page d'entretien</h1>", unsafe_allow_html=True)
-
-# Create an empty container
-MailForm = st.empty()
-checkingCode = st.empty()
+# Define the actual login credentials
 actual_email = "email"
 actual_password = "password"
-step=0
 
-# Insert a form in the container
-with MailForm.form("login"):
-    st.markdown("Entrez Votre mail ")
-    email = st.text_input("Email",placeholder="Type Email lors de votre inscriptions")
-    # password = st.text_input("Password", placeholder="Code envoyé par mail",type="password")
-    submit = st.form_submit_button("suivant")
+# Initialize session state for login status
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
 
-if submit and email == actual_email :
-    # If the form is submitted and the email and password are correct,
-    # clear the form/container and display a success message
-    MailForm.empty()
-    st.success("Next step")
-    step=1
-        
-            
-elif submit and email != actual_email :
-    st.error("Login failed")
-    st.info("Please enter your email address")
+# Function to render login page
+def login_page():
+
+    title = st.markdown("<h1 style='text-align: center; color: #E1AD01;'>Bienvenue sur la page d'entretien de Gainde Talent Provider</h1>", unsafe_allow_html=True)
+    
+    placeholder = st.empty()  # Placeholder for the form
+
+    # Insert a form in the container
+    with placeholder.form("login"):
+        st.markdown("Entrez Votre mail et le code qui vous a été envoyés")
+        email = st.text_input("Email", placeholder="Type Email lors de votre inscription")
+        password = st.text_input("Password", placeholder="Code envoyé par mail", type="password")
+        submit = st.form_submit_button("Login")
+
+    # Login validation
+    if submit:
+        if email == actual_email and password == actual_password:
+            # Set session state to logged in and clear form
+            st.session_state.logged_in = True
+            placeholder.empty()
+            st.success("Login successful")
+            st.rerun()  # Force page reload
+        else:
+            st.error("Login failed")
+
+# Function to render the main content after login
+def main_page():
+    st.write("Welcome to the main content page!")  # Example content
+    # Add other functionalities here
+     # Logout button
+    if st.button("Déconnexion"):
+        st.session_state.pop("logged_in")  # Remove the logged_in session variable
+        st.rerun()  # Reload the page to go back to login page
+
+# Check login status and display appropriate page
+if st.session_state.logged_in:
+    main_page()
 else:
-    pass
-
-# le new formulaire
-if step == 1:
-    with checkingCode.form("code"):
-        st.markdown("Entrez le code qui vous a été envoyés")
-        password = st.text_input("Password", placeholder="Code envoyé par mail",type="password")
-        submit2 = st.form_submit_button("Commencer l'entretien")
-            
-    if submit2 and password == actual_password:
-                checkingCode.empty()
-                MailForm.empty()
-                st.success("l'entretien va demaré")
-    elif submit2 and password != actual_password:
-                st.toast("Mauvais code ou Pas d'entretien pour le moment")
+    login_page()

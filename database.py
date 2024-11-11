@@ -170,3 +170,17 @@ def update_resultat(resultat_id, updated_data):
         WHERE resultat_id = %s;
     '''
     return execute_query(query, (updated_data['cv_id'], updated_data['offre_id'], updated_data['cosine_similarity'], resultat_id))
+
+def generate_code(mail, code):
+    """Met à jour la colonne 'code' pour l'utilisateur spécifié par son email."""
+    query = '''
+        UPDATE "candidat"
+        SET code = %s
+        WHERE mail = %s;
+    '''
+    result = execute_query(query, (code, mail))
+    if result is None:
+        logging.error(f"Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : {mail}")
+        return False
+    logging.info(f"Code mis à jour avec succès pour l'utilisateur avec l'email : {mail}")
+    return True

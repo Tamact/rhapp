@@ -594,23 +594,23 @@ def main():
                 # Notation par étoiles
                 sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
                 selected_rating = st.feedback("stars")
-
+                profil_type = st.selectbox("Selectionnez le profil de "+candidate_details['nom']  ,options=["Data Scientist", "Fullstack Developer", "web Desingner", "Humain Ressource", "software engineer"],)
                 # Saisie du message de recommandation
                 message_body = st.text_area("Message de recommandation")
 
             
-            email = "fabricejordan2001@gmail.com"
+            # email = "fabricejordan2001@gmail.com"
             # !test pour avoir le mail du candidat
-            st.write(st.session_state.selected_candidate['mail'])
+            # st.write(st.session_state.selected_candidate['mail'])
 
             if st.button("Envoyer la recommandation"):
                 if not selected_rating:
                     st.warning("notez d'abord le candidat")
                 elif message_body:
                     # Message d'email
-                    email = "fabricejordan2001@gmail.com"
-                    email_subject = f"Recommandation pour {selected_candidate}"
-                    email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}"
+                    email = "fabricejordan2001@gmail.com"#*ici devra etre le mail du superieur au RH
+                    email_subject = f"Recommandation pour {selected_candidate} pour un profil de {profil_type}"
+                    email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}\n\n Rendez vous sur ce lien : http://localhost:8501/entretien"
                 
                     # Envoi de l'email
                     if send_email(email, email_subject, email_message):
@@ -619,20 +619,53 @@ def main():
                     st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
 
     if selected == "Génération de questions d'entretien":
-        st.header("Génération de Questions d'Entretien")
-        profile = st.text_area("Entrez le profil du candidat (ex: Data scientist avec 3 ans d'expérience en Machine Learning)")
+        #!modele avec IA
+        # st.header("Génération de Questions d'Entretien")
+        # profile = st.text_area("Entrez le profil du candidat (ex: Data scientist avec 3 ans d'expérience en Machine Learning)")
 
-        if st.button("Générer des questions d'entretien"):
-            if profile:
-                questions = generate_questions(profile, num_questions=10)
-                st.subheader("Questions générées :")
-                for i, question in enumerate(questions, 1):
-                    st.write(f"{i}. {question}")
-            else:
-                st.warning("Veuillez entrer le profil du candidat pour générer les questions.")
+        # if st.button("Générer des questions d'entretien"):
+        #     if profile:
+        #         questions = generate_questions(profile, num_questions=10)
+        #         st.subheader("Questions générées :")
+        #         for i, question in enumerate(questions, 1):
+        #             st.write(f"{i}. {question}")
+        #     else:
+        #         st.warning("Veuillez entrer le profil du candidat pour générer les questions.")
+        #? model sans IA (manuelle)
+        # Conteneur dynamique pour l'input de profil et le bouton
+        profile_container = st.empty()
+        num_question_container = st.empty()  # Conteneur pour num_question
 
+        # Input pour le profil de métier
+        with profile_container.form("profil"):
+            profile = st.text_input(
+                "Entrez le profil de métier dont vous voulez générer des questions",
+                placeholder="exemple: Fullstack developpeur, Data Scientist",
+                help="Générer des profils en fonction des offres"
+            )
+            check_profile = st.form_submit_button("Check Profile", help="Pour savoir si le profil n'existe pas déjà")
 
-
+        # Si le bouton "Check Profile" est cliqué, on désactive l'input profil et on affiche num_question
+        if check_profile:
+            # Désactive le champ profil et masques autres éléments
+            profile_container.empty()  # Supprimer l'input profil
+            with profile_container.form("disabled"):
+                st.text_input("Entrez le profil de métier", value=profile, disabled=True)  # Désactive l'input
+                st.form_submit_button("Profile checked", disabled=True)
+            # Afficher num_question seulement si show_num_question est activé
+            with num_question_container:
+                question_counter = 0
+                while True:
+                    question = st.text_input(f"Rédigez la question {question_counter + 1} (ou laissez vide pour terminer) :", key=f"question_{question_counter}")
+                    if question:
+                        question_counter += 1 
+                    else:
+                        break
+                    
+                    
+                    insert_question = st.button("Générer ces questions :")
+                    if insert_question :
+                        st.info("Entretien pour le profilgénéré")
 if __name__ == "__main__":
     main()
 
