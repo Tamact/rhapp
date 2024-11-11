@@ -12,10 +12,14 @@ from email.mime.multipart import MIMEMultipart
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from dotenv import load_dotenv
 import os
-#pour générer le code des candidats contacté
 import random
 import string
 from database import generate_code
+import spacy
+
+
+
+
 
 model_name = "t5-large"
 tokenizer = T5Tokenizer.from_pretrained('t5-large', Legacy=False)
