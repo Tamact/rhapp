@@ -29,3 +29,4 @@ ERROR:root:Connexion à la base de données échouée.
 ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
 ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : sitaphadiop30@gmail.com

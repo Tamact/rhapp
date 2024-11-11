@@ -608,7 +608,7 @@ def main():
                     st.warning("notez d'abord le candidat")
                 elif message_body:
                     # Message d'email
-                    email = "fabricejordan2001@gmail.com"#*ici devra etre le mail du superieur au RH
+                    email = candidate_details['mail']
                     email_subject = f"Recommandation pour {selected_candidate} pour un profil de {profil_type}"
                     email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}\n\n Rendez vous sur ce lien : http://localhost:8501/entretien"
                 
