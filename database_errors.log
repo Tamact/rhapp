@@ -98,3 +98,112 @@ ERROR:root:Connexion à la base de données échouée.
 ERROR:root:Erreur de connexion à la base de données : connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
 
 ERROR:root:Connexion à la base de données échouée.
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  syntaxe en entrée invalide pour le type numeric : « 778634567U »
+LINE 3: ...ané', 'Ibrahim', 'ibrahimasorysane986@gmail.com', '778634567...
+                                                             ^
+ - Query: 
+        INSERT INTO "candidat" (nom, prenom, mail, numero_tlfn, profil)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING user_id;
+     - Params: ('Sané', 'Ibrahim', 'ibrahimasorysane986@gmail.com', '778634567U', 'data scientist')
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (133,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (142,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (142,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (142,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (153,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (154,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (132,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (145,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (145,)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne sc.offre_id n'existe pas
+LINE 4:         JOIN offre o ON sc.offre_id = o.offre_id
+                                ^
+HINT:  Peut-être que vous souhaitiez référencer la colonne « o.offre_id ».
+ - Query: 
+        SELECT sc.suivi_id, o.titre AS offre, sc.status, sc.last_updated
+        FROM suivi_candidatures sc
+        JOIN offre o ON sc.offre_id = o.offre_id
+        WHERE sc.user_id = %s;
+     - Params: (145,)
