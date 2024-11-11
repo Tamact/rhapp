@@ -12,6 +12,10 @@ from email.mime.multipart import MIMEMultipart
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from dotenv import load_dotenv
 import os
+#pour générer le code des candidats contacté
+import random
+import string
+from database import generate_code
 
 model_name = "t5-large"
 tokenizer = T5Tokenizer.from_pretrained('t5-large', Legacy=False)
@@ -65,16 +69,20 @@ def set_app_theme():
 load_dotenv()
 
 #Fonction d'envoi de mails automatiques
-
+def generate_random_code(length=6):
+    """Génère un code aléatoire de 6 caractères."""
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 def send_email(recipient, subject, message_body):
     sender = os.getenv("EMAIL_SENDER")
     password = os.getenv("EMAIL_PASSWORD")
-
+    code = generate_random_code()
+    message_body_with_code = f"{message_body}\n\nVoici votre code d'entretien : {code}"
+    
     msg = MIMEMultipart()
     msg['Subject'] = subject 
     msg['From'] = sender
     msg['To'] = recipient
-    msg.attach(MIMEText(message_body, 'plain', 'utf-8'))
+    msg.attach(MIMEText(message_body_with_code, 'plain', 'utf-8'))
 
     try:
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -82,6 +90,7 @@ def send_email(recipient, subject, message_body):
             server.login(sender, password)
             server.send_message(msg)
         st.success("E-mail envoyé avec succès!")
+        generate_code(recipient, code) # si le mail pass on enregistre lecode
     except smtplib.SMTPAuthenticationError:
         st.error("Erreur d'authentification SMTP : vérifiez les identifiants.")
     except smtplib.SMTPConnectError:
