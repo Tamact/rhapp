@@ -586,6 +586,7 @@ def main():
 
         # Récupérer la liste des candidats
         candidates = get_all_candidates()
+        profil_details = get_all_profil()
         if not candidates:
             st.error("Aucun candidat trouvé.")
         else:
@@ -603,7 +604,8 @@ def main():
                 # Notation par étoiles
                 sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
                 selected_rating = st.feedback("stars")
-                profil_type = st.selectbox("Selectionnez le profil de "+candidate_details['nom']  ,options=["Data Scientist", "Fullstack Developer", "web Desingner", "Humain Ressource", "software engineer"],)
+                selected_profil = st.selectbox("les profils disponibles :", 
+                                            [f"{c['profil']}" for c in profil_details],help="on doit attrubuer un profil au candidat pour qu'il puisse répondre à des questions liés à son profil")
                 # Saisie du message de recommandation
                 message_body = st.text_area("Message de recommandation")
 
@@ -618,11 +620,11 @@ def main():
                 elif message_body:
                     # Message d'email
                     email = candidate_details['mail']
-                    email_subject = f"Recommandation pour {selected_candidate} pour un profil de {profil_type}"
+                    email_subject = f"Recommandation pour {selected_candidate} pour un profil de {selected_profil}"
                     email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}\n\n Rendez vous sur ce lien : http://localhost:8501/entretien"
                 
                     # Envoi de l'email
-                    if send_email(email, email_subject, email_message):
+                    if send_email(email, email_subject, email_message,selected_profil):
                         st.success("La recommandation a été envoyée avec succès.")
                 else:
                     st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
@@ -668,7 +670,7 @@ def main():
                 Questions=[]
                 selected_empty_profil = st.selectbox("les profils vide :", 
                                             [f"{c['profil']}" for c in profil_empty])
-                profil_selected = next((c for c in selected_empty_profil if isinstance(c, dict) and f"{c.get('profil', '')}" == selected_empty_profil), None)
+                selected_profil = next((c for c in selected_empty_profil if isinstance(c, dict) and f"{c.get('profil', '')}" == selected_empty_profil), None)
                 
                 # les inputs pour les questions
                 for i in range(1, 11):
