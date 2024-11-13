@@ -184,3 +184,54 @@ def generate_code(mail, code):
         return False
     logging.info(f"Code mis à jour avec succès pour l'utilisateur avec l'email : {mail}")
     return True
+
+def checking_profil (profil):
+    # Vérifier si le profil existe déjà dans la table "entretien"
+    check_query = '''
+        SELECT profil FROM "entretien"
+        WHERE profil = %s;
+    '''
+    # si la valeur retourner est none le profil n'existe pas
+    exists = execute_query(check_query, (profil,), fetch_one=True)
+    if exists:
+        print("le profil existe deja:",exists)
+        return exists
+    else:
+        print("au cas ou il n'existe pas de profil  :", exists)
+        insert_query = ''' INSERT INTO "entretien" (profil) VALUES (%s); '''
+        if execute_query(insert_query, (profil,)): 
+            print("erreur d'insertion:", insert_query) 
+            return exists
+        else: 
+            print("\n\nNouveau profil ajouté a la bd:",profil) 
+            return exists
+
+def get_all_profil ():
+    """ Pour afficher tous les profils dans la tables """
+    query = '''SELECT profil , question FROM entretien;'''
+    result = execute_query(query, fetch_all=True)
+    if result:
+        return [{"profil": row[0], "question": row[1]} for row in result]
+    return []
+
+def get_empty_profil():
+    """Pour le selected box pour afficher que les profils qui n'ont pas encore de question """
+    query = '''SELECT profil FROM entretien WHERE question IS NULL;'''
+    result = execute_query(query, fetch_all=True)
+    if result:
+        return [{"profil": row[0]} for row in result]
+    return []
+def save_question(profil, question):
+    """Pour insérer les questions une fois le profil validé """
+    query = '''
+        UPDATE "entretien" 
+        SET question = %s
+        WHERE profil = %s;
+    '''
+    result = execute_query(query ,(question, profil))
+    if result is None:
+        logging.error(f"Mise a jour du profil : {profil}")
+        return False
+    logging.error(f"Erreur : {profil} n'est pas vide")
+    return True
+    
