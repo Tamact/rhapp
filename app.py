@@ -15,7 +15,7 @@ import time
 # Définir le thème
 st.set_page_config(
     page_title="GTP",
-    page_icon=img,
+    page_icon="favicon.png",
     layout="wide",
     initial_sidebar_state="auto",
 )
@@ -137,9 +137,9 @@ def main():
                         if user_id:  
                             competences_list = [competence.strip() for competence in competences.split(",")]
                             cv_id = save_to_cv(user_id, preprocessed_cv_text, competences_list)
-                            suivi_id = create_suivi_candidature(user_id)
-                            if suivi_id:
-                                st.write(f"Suivi de candidature créé avec l'ID {suivi_id} pour {nom} {prenom}.")
+                            #suivi_id = create_suivi_candidature(user_id)
+                            #if suivi_id:
+                             #   st.write(f"Suivi de candidature créé avec l'ID {suivi_id} pour {nom} {prenom}.")
 
                 
                             if cv_id:
