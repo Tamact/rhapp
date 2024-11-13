@@ -57,3 +57,6 @@ ERROR:root:Erreur lors de la mise à jour de l'entretien : jor
 ERROR:root:Mise a jour du profil : test1
 ERROR:root:Mise a jour du profil : test2
 ERROR:root:Mise a jour du profil : profil1
+ERROR:root:Mise a jour du profil : profil2
+ERROR:root:Mise a jour du profil : profil 3
+ERROR:root:Mise a jour du profil : profil 4
