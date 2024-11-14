@@ -76,7 +76,7 @@ load_dotenv()
 def generate_random_code(length=6):
     """Génère un code aléatoire de 6 caractères."""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-def send_email(recipient, subject, message_body):
+def send_email(recipient, subject, message_body ,profil):
     sender = os.getenv("EMAIL_SENDER")
     password = os.getenv("EMAIL_PASSWORD")
     code = generate_random_code()
@@ -94,7 +94,7 @@ def send_email(recipient, subject, message_body):
             server.login(sender, password)
             server.send_message(msg)
         st.success("E-mail envoyé avec succès!")
-        generate_code(recipient, code) # si le mail pass on enregistre lecode
+        generate_code(recipient, code, profil) # si le mail pass on enregistre lecode
     except smtplib.SMTPAuthenticationError:
         st.error("Erreur d'authentification SMTP : vérifiez les identifiants.")
     except smtplib.SMTPConnectError:
