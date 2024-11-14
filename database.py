@@ -234,4 +234,28 @@ def save_question(profil, question):
         return False
     logging.error(f"Erreur : {profil} n'est pas vide")
     return True
-    
+
+def use_code_once(mail):
+    """"Cet fonction supprime le code qui a été trouvé dans la table candidat pour qu'il soit utilisable une seul fois""" 
+    query =''' 
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = %s;
+    '''
+    result = execute_query(query,(mail,))
+    if result:
+        print("code de ",mail," supprimé")
+        return result
+    else:
+        print("Erreur lors de l'execution ")
+        return result
+def check_candidat_connexion(mail,code):
+    """requet pour tester la connexion du candidat sur la page entretien"""
+    query = ''' SELECT * FROM "candidat" WHERE mail = %s AND code = %s; '''
+    result =execute_query(query,(mail,code),fetch_one=True)
+    if result:
+        print("user trouvé: "," mail:",mail)
+        return result
+    else:
+        print("mauvais identifiant",mail,code)
+        return result

@@ -64,3 +64,134 @@ ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email
 ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
 ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
 ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s; - Params: ('email', 'fzff')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM candidat
+                    ^
+ - Query: SELECT * from 
+            FROM candidat
+            WHERE mail =%s AND code =%s; - Params: ('email', 'fzff')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM "candidat"
+                    ^
+ - Query: SELECT * from 
+            FROM "candidat"
+            WHERE mail =%s AND code =%s; - Params: ('EMAIL', 'wree')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+LINE 2:             FROM "candidat"
+                    ^
+ - Query: SELECT * from 
+            FROM "candidat"
+            WHERE mail =%s AND code =%s; - Params: ('EMAIL', 'wree')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la relation « User » n'existe pas
+LINE 1: SELECT * FROM "User" WHERE mail = 'fabricejordan2001@gmail.c...
+                      ^
+ - Query: SELECT * FROM "User" WHERE mail = %s AND code = %s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la relation « User » n'existe pas
+LINE 1: SELECT * FROM "User" WHERE mail = 'fabricejordan2001@gmail.c...
+                      ^
+ - Query: SELECT * FROM "User" WHERE mail = %s AND code = %s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
+                           ^
+ - Query:  
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = '%s';
+     - Params: ('fabricejordan2001@gmail.com',)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
+                           ^
+ - Query:  
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = '%s';
+     - Params: ('fabricejordan2001@gmail.com',)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
+                           ^
+ - Query:  
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = '%s';
+     - Params: ('fabricejordan2001@gmail.com',)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
+                           ^
+ - Query:  
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = '%s';
+     - Params: ('fabricejordan2001@gmail.com',)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
+                           ^
+ - Query:  
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = '%s';
+     - Params: ('fabricejordan2001@gmail.com',)
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
+                           ^
+ - Query:  
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = '%s';
+     - Params: ('fabricejordan2001@gmail.com',)

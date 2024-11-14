@@ -1,6 +1,7 @@
 import streamlit as st
 from utils import is_valid_email, set_app_theme
 from PIL import Image
+from database import *
 
 img = Image.open("favicon.png")
 
@@ -30,15 +31,17 @@ def login_page():
 
     # Insert a form in the container
     with placeholder.form("login"):
-        st.markdown("Entrez Votre mail et le code qui vous a été envoyés")
+        st.markdown("Entrez Votre mail et le code qui vous a été envoyés",help="ATTENTION CE CODE EST A USAGE UNIQUE")
         email = st.text_input("Email", placeholder="Type Email lors de votre inscription")
         password = st.text_input("Password", placeholder="Code envoyé par mail", type="password")
         submit = st.form_submit_button("Login")
 
     # Login validation
     if submit:
-        if email == actual_email and password == actual_password:
+        print("sortie de la fonction:",check_candidat_connexion(email,password))
+        if check_candidat_connexion(email, password):
             # Set session state to logged in and clear form
+            use_code_once(email)
             st.session_state.logged_in = True
             placeholder.empty()
             st.success("Login successful")
