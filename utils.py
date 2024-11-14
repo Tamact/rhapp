@@ -9,7 +9,6 @@ import smtplib
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from transformers import T5Tokenizer, T5ForConditionalGeneration
 from dotenv import load_dotenv
 import os
 #pour générer le code des candidats contacté
@@ -17,9 +16,6 @@ import random
 import string
 from database import generate_code
 
-model_name = "t5-large"
-tokenizer = T5Tokenizer.from_pretrained('t5-large', Legacy=False)
-model = T5ForConditionalGeneration.from_pretrained('t5-large')
 
 @st.cache_resource
 def get_stop_words():
@@ -97,17 +93,4 @@ def send_email(recipient, subject, message_body):
         st.error("Erreur de connexion SMTP : vérifiez la connexion au serveur SMTP.")
     except Exception as e:
         st.error(f"Erreur lors de l'envoi de l'e-mail : {str(e)}")
-
-
-def generate_questions(profile, num_questions=10):
-    
-    input_text = f"generate questions based on the following profile: {profile}"
-    inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=512, truncation=True)
-
-    # Générer des questions
-    outputs = model.generate(inputs, max_length=50, num_return_sequences=num_questions, num_beams=num_questions)
-
-    # Décoder les questions générées
-    questions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-    return questions
 
