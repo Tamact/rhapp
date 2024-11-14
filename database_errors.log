@@ -195,3 +195,5 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     SET code = NULL
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
+ERROR:root:Mise a jour du profil : Develloppeur Fullstack
+ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Develloppeur Fullstack

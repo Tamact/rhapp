@@ -14,14 +14,17 @@ st.set_page_config(
 
 set_app_theme()
 
-# Define the actual login credentials
-actual_email = "email"
-actual_password = "password"
 
 # Initialize session state for login status
+# ! si la session existe pas on affiche que le formulaire
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
-
+# ? session state pour récuperer les info du candidat
+if 'mail' not in st.session_state:
+    st.session_state.mail = ''
+# ? session state pour recuperer le profil et afficher les questions correspondantes
+if 'profil' not in st.session_state:
+    st.session_state.profil = ''
 # Function to render login page
 def login_page():
 
@@ -38,12 +41,16 @@ def login_page():
 
     # Login validation
     if submit:
-        print("sortie de la fonction:",check_candidat_connexion(email,password))
         if check_candidat_connexion(email, password):
             # Set session state to logged in and clear form
             use_code_once(email)
             st.session_state.logged_in = True
+            st.session_state.mail= email
+            st.session_state.profil = get_profil_from_candidate(st.session_state.mail)
+            print("session profil:",st.session_state.profil)
+            
             placeholder.empty()
+            # print("varuable session:",email)
             st.success("Login successful")
             st.rerun()  # Force page reload
         else:
@@ -51,11 +58,13 @@ def login_page():
 
 # Function to render the main content after login
 def main_page():
-    st.write("Welcome to the main content page!")  # Example content
+    st.markdown("<h1 style='text-align: center; color: #E1AD01;'>Veuillez répondre au question d'entretien technique pour un profil de: </h1>" , unsafe_allow_html=True)  # Example content
+    st.header(st.session_state.profil)
     # Add other functionalities here
      # Logout button
     if st.button("Déconnexion"):
         st.session_state.pop("logged_in")  # Remove the logged_in session variable
+        st.session_state.pop("mail")
         st.rerun()  # Reload the page to go back to login page
 
 # Check login status and display appropriate page

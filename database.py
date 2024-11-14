@@ -194,16 +194,16 @@ def checking_profil (profil):
     # si la valeur retourner est none le profil n'existe pas
     exists = execute_query(check_query, (profil,), fetch_one=True)
     if exists:
-        print("le profil existe deja:",exists)
+        # print("le profil existe deja:",exists)
         return exists
     else:
         print("au cas ou il n'existe pas de profil  :", exists)
         insert_query = ''' INSERT INTO "entretien" (profil) VALUES (%s); '''
         if execute_query(insert_query, (profil,)): 
-            print("erreur d'insertion:", insert_query) 
+            # print("erreur d'insertion:", insert_query) 
             return exists
         else: 
-            print("\n\nNouveau profil ajouté a la bd:",profil) 
+            # print("\n\nNouveau profil ajouté a la bd:",profil) 
             return exists
 
 def get_all_profil ():
@@ -221,6 +221,21 @@ def get_empty_profil():
     if result:
         return [{"profil": row[0]} for row in result]
     return []
+
+def get_profil_from_candidate (mail) :
+    """recuperer le profil de la table candidat grace a l'email lors de la connexion"""
+    query = '''
+        SELECT profil 
+        FROM candidat 
+        WHERE mail = %s
+        '''
+    result = execute_query(query,(mail,),fetch_one=True)
+    if result :
+        print("Voici le profil:",mail)
+        return result[0]
+    else:
+        print("Echec de  la recuperation")
+        return result
 def save_question(profil, question):
     """Pour insérer les questions une fois le profil validé """
     query = '''
@@ -244,18 +259,18 @@ def use_code_once(mail):
     '''
     result = execute_query(query,(mail,))
     if result:
-        print("code de ",mail," supprimé")
+        # print("code de ",mail," supprimé")
         return result
     else:
-        print("Erreur lors de l'execution ")
+        # print("Erreur lors de l'execution ")
         return result
 def check_candidat_connexion(mail,code):
     """requet pour tester la connexion du candidat sur la page entretien"""
     query = ''' SELECT * FROM "candidat" WHERE mail = %s AND code = %s; '''
     result =execute_query(query,(mail,code),fetch_one=True)
     if result:
-        print("user trouvé: "," mail:",mail)
+        # print("user trouvé: "," mail:",mail)
         return result
     else:
-        print("mauvais identifiant",mail,code)
+        # print("mauvais identifiant",mail,code)
         return result
