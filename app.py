@@ -404,8 +404,8 @@ def main():
         with st.sidebar:
             selected1 = option_menu(
             menu_title="Gestion de la base de données", 
-            options=["Gestion des candidats", "Gestion des offres", "Gestion des résultats", "Gestion des cvs"],
-            icons=["person", "briefcase", "clipboard-data", "files"],
+            options=["Gestion des candidats", "Gestion des offres", "Gestion des résultats", "Gestion des cvs","Gestion Profil/Question"],
+            icons=["person", "briefcase", "clipboard-data", "files", "gear"],
             menu_icon="database",  
             default_index=0,  
             styles={
@@ -571,12 +571,22 @@ def main():
                 return
             session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text","competences"])
             st.dataframe(session_state.cv_df)
+            
+        if selected1 == "Gestion Profil/Question":   
+            st.header("Ici vous trouverez tous les types de profil ainsi que leur questions spécifique")
+            st.session_state.profil= get_all_profil()
+            if not session_state.profil:
+                st.write("Il n'existe aucun profil à ce jour")
+                return
+            session_state.profil = pd.DataFrame(session_state.profil , columns=["profil","question"])  
+            st.dataframe(session_state.profil)  
     
     if selected == "Gestion de suivi des candidats":
         st.header("Gestion de suivi des candidats")
 
         # Récupérer la liste des candidats
         candidates = get_all_candidates()
+        profil_details = get_all_profil()
         if not candidates:
             st.error("Aucun candidat trouvé.")
         else:
@@ -594,7 +604,8 @@ def main():
                 # Notation par étoiles
                 sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
                 selected_rating = st.feedback("stars")
-                profil_type = st.selectbox("Selectionnez le profil de "+candidate_details['nom']  ,options=["Data Scientist", "Fullstack Developer", "web Desingner", "Humain Ressource", "software engineer"],)
+                selected_profil = st.selectbox("les profils disponibles :", 
+                                            [f"{c['profil']}" for c in profil_details],help="on doit attrubuer un profil au candidat pour qu'il puisse répondre à des questions liés à son profil")
                 # Saisie du message de recommandation
                 message_body = st.text_area("Message de recommandation")
 
@@ -608,12 +619,12 @@ def main():
                     st.warning("notez d'abord le candidat")
                 elif message_body:
                     # Message d'email
-                    email = "fabricejordan2001@gmail.com"#*ici devra etre le mail du superieur au RH
-                    email_subject = f"Recommandation pour {selected_candidate} pour un profil de {profil_type}"
+                    email = candidate_details['mail']
+                    email_subject = f"Recommandation pour {selected_candidate} pour un profil de {selected_profil}"
                     email_message = f"Vous avez été recommandé avec une note de {sentiment_mapping[selected_rating]}.\n\n{message_body}\n\n Rendez vous sur ce lien : http://localhost:8501/entretien"
                 
                     # Envoi de l'email
-                    if send_email(email, email_subject, email_message):
+                    if send_email(email, email_subject, email_message,selected_profil):
                         st.success("La recommandation a été envoyée avec succès.")
                 else:
                     st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
@@ -632,40 +643,51 @@ def main():
         #     else:
         #         st.warning("Veuillez entrer le profil du candidat pour générer les questions.")
         #? model sans IA (manuelle)
-        # Conteneur dynamique pour l'input de profil et le bouton
-        profile_container = st.empty()
-        num_question_container = st.empty()  # Conteneur pour num_question
-
-        # Input pour le profil de métier
-        with profile_container.form("profil"):
-            profile = st.text_input(
-                "Entrez le profil de métier dont vous voulez générer des questions",
-                placeholder="exemple: Fullstack developpeur, Data Scientist",
-                help="Générer des profils en fonction des offres"
-            )
-            check_profile = st.form_submit_button("Check Profile", help="Pour savoir si le profil n'existe pas déjà")
-
-        # Si le bouton "Check Profile" est cliqué, on désactive l'input profil et on affiche num_question
-        if check_profile:
-            # Désactive le champ profil et masques autres éléments
-            profile_container.empty()  # Supprimer l'input profil
-            with profile_container.form("disabled"):
-                st.text_input("Entrez le profil de métier", value=profile, disabled=True)  # Désactive l'input
-                st.form_submit_button("Profile checked", disabled=True)
-            # Afficher num_question seulement si show_num_question est activé
-            with num_question_container:
-                question_counter = 0
-                while True:
-                    question = st.text_input(f"Rédigez la question {question_counter + 1} (ou laissez vide pour terminer) :", key=f"question_{question_counter}")
-                    if question:
-                        question_counter += 1 
-                    else:
-                        break
-                    
-                    
-                    insert_question = st.button("Générer ces questions :")
-                    if insert_question :
-                        st.info("Entretien pour le profilgénéré")
+        st.header("cet page sert à creer des profils et générer des questions pour des entretien")
+        # Conteneurs pour chaque étape
+        num_question_container = st.empty()
+        
+        # Étape 2: Afficher le champ pour le nombre de questions
+        with num_question_container.form("questions"):
+            profil= st.text_input("Entrez le profil de métier (1 à la fois) ",help="Exemple :Data Analyst, Fullstack Developer")
+            generate_questions = st.form_submit_button("Check profil")
+        # Étape 3: Générer les inputs pour les questions si le nombre est validé
+        if generate_questions:
+            if not profil:
+                st.warning("Please enter profil")
+            elif checking_profil(profil) == None :
+                # le profil n'existe pas alors on le rentre dans la bd et on affiche les inputs pour oles questions
+                st.success('Nouveau profil enregistré')
+            else:
+                st.warning("ce profil existe déja!!!")
+        st.header("Veuillez insérer des questions pour les profils récent:")
+        profil_empty = get_empty_profil()
+        if not profil_empty:
+            st.error("Il n' y a pas encore de profil vides")
+        else:
+            with st.form("Formulaire pour insérer des questions sur des profils vides"):
+                st.write("Pour les profils récement crée ,veuillez insérer vos questions :")
+                Questions=[]
+                selected_empty_profil = st.selectbox("les profils vide :", 
+                                            [f"{c['profil']}" for c in profil_empty])
+                selected_profil = next((c for c in selected_empty_profil if isinstance(c, dict) and f"{c.get('profil', '')}" == selected_empty_profil), None)
+                
+                # les inputs pour les questions
+                for i in range(1, 11):
+                    # Ajout d'un input avec un label unique pour chaque question
+                    Question = st.text_input(f"Question N° {i}")
+                    Questions.append(Question)
+                question_submit= st.form_submit_button("Valider")
+            if question_submit:
+                if all(Questions):
+                    save_question(selected_empty_profil,Questions)
+                    st.success("Question Enregisté")
+                    if  profil_empty:
+                        st.info("New profil sélectioné")
+                    print(Questions)
+                    print(selected_empty_profil)
+                else:
+                    st.warning("Veuillez remplir toutes les questions")
 if __name__ == "__main__":
     main()
 
