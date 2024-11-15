@@ -20,8 +20,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto",
 )
-
-
 poids_kano = {
     "Indispensable": 1,
     "Attractive": 2,
@@ -29,7 +27,6 @@ poids_kano = {
     "Indifferent": 0,
     "Double-tranchant": -1
 }
-
 def main():
 
     set_app_theme()
@@ -116,7 +113,6 @@ def main():
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
             competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
-            
             cv_text = extract_text_from_pdf(cv_file)
         
             if st.button("Enregistrer CV"):
@@ -156,7 +152,8 @@ def main():
             titre = st.text_input("Titre *", placeholder="Entrez le titre", key="titre", help="Titre de l'offre")
             offre_societe = st.text_input("Nom de la société *", placeholder="Entrez le nom de la sociéte", key="societe", help="Nom de la sociéte qui a fait l'offre")
             text_offre = st.text_area("Collez le texte de l'offre d'emploi ici", height=300)
-            
+
+        
         else:
             titre = st.text_input("Nom de l'offre")
             offre_societe = st.text_input("Nom de la société")
@@ -199,9 +196,6 @@ def main():
         st.header("Calcul de similarité entre CVs et offre")
         # Récupérer les CVs et offres d'emploi
         cvs = get_all_cvs()  
-        for cv in cvs:
-            if cv['competences'] is None:  # Vérifie si competences est None
-                cv['competences'] = []  # Initialise comme une liste vide
         offres = get_all_offres() 
         cv_options = {(cv["nom"], cv["prenom"]): cv["cv_id"] for cv in cvs}
 
@@ -216,8 +210,7 @@ def main():
         # Sélectionner plusieurs CVs et une seule offre
         selected_cvs = st.multiselect(
             "Sélectionnez un ou plusieurs candidats",
-            options=[(cv['nom'], cv['prenom']) for cv in cvs],
-            help="Sélectionnez les cvs des candidats pour calculer la similarité"  
+            options=[(cv['nom'], cv['prenom']) for cv in cvs]  
         )
 
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
@@ -269,7 +262,7 @@ def main():
                 cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']]), model4.encode([cv['cv_text']])], axis=1)
 
                 # Calculer la similarité cosinus
-                similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0]) + score_similarite/25
+                similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0])
 
                 # Stocker le résultat dans une liste pour affichage
                 results.append({
@@ -408,9 +401,9 @@ def main():
             default_index=0,  
             styles={
                 "container": {"padding": "0!important", "background-color": "#F0F2D6"},  
-                "icon": {"color": "#191970", "font-size": "20px"}, 
+                "icon": {"color": "#191970", "font-size": "20px"},  # Style des icônes
                 "nav-link": {"font-size": "16px", "text-align": "center", "margin": "0px", "--hover-color": "#E1AD01"},
-                "nav-link-selected": {"background-color": "#E1AD01"}, 
+                "nav-link-selected": {"background-color": "#E1AD01"},  # Couleur de l'option sélectionnée
                         },
             ) 
     
@@ -567,7 +560,7 @@ def main():
             if not session_state.cv:
                 st.write("Aucun cv trouvé dans la base de données.")
                 return
-            session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text","competences"])
+            session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text"])
             st.dataframe(session_state.cv_df)
             
         if selected1 == "Gestion Profil/Question":   
@@ -600,7 +593,7 @@ def main():
                 st.write(f"**Email du candidat :** {candidate_details['mail']}")
                 
                 # Notation par étoiles
-                sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
+                sentiment_mapping = ["1 étoiles", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
                 selected_rating = st.feedback("stars")
                 selected_profil = st.selectbox("les profils disponibles :", 
                                             [f"{c['profil']}" for c in profil_details],help="on doit attrubuer un profil au candidat pour qu'il puisse répondre à des questions liés à son profil")
@@ -610,7 +603,7 @@ def main():
             
             email = "fabricejordan2001@gmail.com"
             # !test pour avoir le mail du candidat
-            st.write(st.session_state.selected_candidate['mail'])
+            # st.write(st.session_state.selected_candidate['mail']),
 
             if st.button("Envoyer la recommandation"):
                 if not selected_rating:
