@@ -199,3 +199,16 @@ ERROR:root:Mise a jour du profil : Develloppeur Fullstack
 ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Develloppeur Fullstack
 ERROR:root:Mise a jour du profil : NEWprofil
 ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , NEWprofil
+ERROR:root:Mise a jour du profil : Developpeur fullstack
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  tableau litéral mal formé : « 10. Quelles sont vos motivations pour poursuivre une carrière en tant que Data Analyst ? »
+LINE 3:         SET question = '10. Quelles sont vos motivations pou...
+                               ^
+DETAIL:  La valeur du tableau doit commencer par « { » ou par l'information de la dimension.
+ - Query: 
+        UPDATE "entretien" 
+        SET question = %s
+        WHERE profil = %s;
+     - Params: ('10. Quelles sont vos motivations pour poursuivre une carrière en tant que Data Analyst ?', '')
+ERROR:root:Mise a jour du profil : 
+ERROR:root:Mise a jour du profil : Data analyst
+ERROR:root:Mise a jour du profil : Data scientist

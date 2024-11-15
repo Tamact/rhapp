@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email
+from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questionnaire_google
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
 from visualization import *
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
@@ -21,9 +21,9 @@ st.set_page_config(
     initial_sidebar_state="auto",
 )
 poids_kano = {
-    "Indispensable": 1,
-    "Attractive": 2,
-    "Proportionnelle": 3,
+    "Indispensable": 5,
+    "Attractive": 3,
+    "Proportionnelle": 2,
     "Indifferent": 0,
     "Double-tranchant": -1
 }
@@ -563,14 +563,58 @@ def main():
             session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text"])
             st.dataframe(session_state.cv_df)
             
-        if selected1 == "Gestion Profil/Question":   
-            st.header("Ici vous trouverez tous les types de profil ainsi que leur questions spécifique")
-            st.session_state.profil= get_all_profil()
-            if not session_state.profil:
+        if selected1 == "Gestion Profil/Question":
+            st.header("Ici vous trouverez tous les types de profil ainsi que leurs questions spécifiques")
+
+            # Récupérer tous les profils et leurs questions
+            st.session_state.profil = get_all_profil()
+
+            if not st.session_state.profil:
                 st.write("Il n'existe aucun profil à ce jour")
-                return
-            session_state.profil = pd.DataFrame(session_state.profil , columns=["profil","question"])  
-            st.dataframe(session_state.profil)  
+            else:
+                # Créer un DataFrame pour afficher tous les profils
+                profils_df = pd.DataFrame(st.session_state.profil, columns=["profil", "question"])
+                st.dataframe(profils_df)
+
+                # Sélection d'un profil spécifique
+                profil_names = [p['profil'] for p in st.session_state.profil]
+                selected_profil = st.selectbox("Sélectionnez un profil pour afficher, modifier ou supprimer les questions", profil_names)
+
+                # Filtrer les questions pour le profil sélectionné
+                selected_profil_data = next((p for p in st.session_state.profil if p['profil'] == selected_profil), None)
+                if selected_profil_data:
+                    st.subheader(f"Questions pour le profil : {selected_profil}")
+
+                    # Charger les questions dans des champs modifiables
+                    questions = selected_profil_data['question'] if isinstance(selected_profil_data['question'], list) else []
+
+                    modified_questions = []
+                    for i, question in enumerate(questions):
+                        # Afficher chaque question dans un champ de texte modifiable
+                        modified_question = st.text_input(f"Question {i+1}", value=question, key=f"question_{i}")
+                        modified_questions.append(modified_question)
+
+                    # Bouton pour enregistrer les modifications
+                    if st.button("Enregistrer les modifications"):
+                        if all(modified_questions):
+                            # Sauvegarder les questions modifiées dans la base de données
+                            update_profil_questions(selected_profil, modified_questions)
+                            st.success("Questions modifiées et enregistrées avec succès.")
+                        else:
+                            st.warning("Veuillez remplir toutes les questions avant de les enregistrer.")
+                    
+                    # Ajouter un bouton de suppression pour le profil
+                    if st.button("Supprimer le profil"):
+                        # Demander une confirmation
+                        st.warning("Êtes-vous sûr de vouloir supprimer ce profil ? Cette action est irréversible.")
+                        confirm_delete = st.button("Confirmer la suppression")
+                        
+                        if confirm_delete:
+                            
+                            delete_profil(selected_profil)
+                            st.success(f"Le profil '{selected_profil}' a été supprimé avec succès.")
+                            st.experimental_rerun()  
+
     
     if selected == "Gestion de suivi des candidats":
         st.header("Gestion de suivi des candidats")
@@ -620,64 +664,76 @@ def main():
                 else:
                     st.warning("Veuillez saisir un message avant d'envoyer la recommandation.")
 
+    
     if selected == "Génération de questions d'entretien":
         st.header("Génération de Questions d'Entretien")
-        profile = st.text_area("Entrez le profil du candidat (ex: Data scientist avec 3 ans d'expérience en Machine Learning)")
+        st.write("Cette page sert à créer des profils et générer des questions pour des entretiens.")
 
-        # if st.button("Générer des questions d'entretien"):
-        #     if profile:
-        #         questions = generate_questions(profile, num_questions=10)
-        #         st.subheader("Questions générées :")
-        #         for i, question in enumerate(questions, 1):
-        #             st.write(f"{i}. {question}")
-        #     else:
-        #         st.warning("Veuillez entrer le profil du candidat pour générer les questions.")
-        #? model sans IA (manuelle)
-        st.header("cet page sert à creer des profils et générer des questions pour des entretien")
-        # Conteneurs pour chaque étape
-        num_question_container = st.empty()
-        
-        # Étape 2: Afficher le champ pour le nombre de questions
-        with num_question_container.form("questions"):
-            profil= st.text_input("Entrez le profil de métier (1 à la fois) ",help="Exemple :Data Analyst, Fullstack Developer")
-            generate_questions = st.form_submit_button("Check profil")
-        # Étape 3: Générer les inputs pour les questions si le nombre est validé
-        if generate_questions:
+        # Étape 1: Saisie du profil
+        with st.form("profil_form"):
+            profil = st.text_input("Entrez le profil de métier (1 à la fois)", help="Exemple : Data Analyst, Fullstack Developer")
+            generate_questions_button = st.form_submit_button("Vérifier et Enregistrer le Profil")
+
+        # Vérification et enregistrement du profil
+        if generate_questions_button:
             if not profil:
-                st.warning("Please enter profil")
-            elif checking_profil(profil) == None :
-                # le profil n'existe pas alors on le rentre dans la bd et on affiche les inputs pour oles questions
-                st.success('Nouveau profil enregistré')
+                st.warning("Veuillez entrer un profil.")
+            elif checking_profil(profil) is None:
+                
+                st.success("Nouveau profil enregistré.")
             else:
-                st.warning("ce profil existe déja!!!")
-        st.header("Veuillez insérer des questions pour les profils récent:")
+                st.warning("Ce profil existe déjà !")
+
+        # Utiliser session_state pour gérer l'état des questions générées
+        if 'auto_generated_questions' not in st.session_state:
+            st.session_state.auto_generated_questions = []
+
+        # Étape 2: Gestion des profils vides
+        st.header("Génération et Prévisualisation des Questions pour les Profils Récents")
         profil_empty = get_empty_profil()
         if not profil_empty:
-            st.error("Il n' y a pas encore de profil vides")
+            st.error("Il n'y a pas encore de profils vides.")
         else:
-            with st.form("Formulaire pour insérer des questions sur des profils vides"):
-                st.write("Pour les profils récement crée ,veuillez insérer vos questions :")
-                Questions=[]
-                selected_empty_profil = st.selectbox("les profils vide :", 
-                                            [f"{c['profil']}" for c in profil_empty])
-                selected_profil = next((c for c in selected_empty_profil if isinstance(c, dict) and f"{c.get('profil', '')}" == selected_empty_profil), None)
-                
-                # les inputs pour les questions
-                for i in range(1, 11):
-                    # Ajout d'un input avec un label unique pour chaque question
-                    Question = st.text_input(f"Question N° {i}")
-                    Questions.append(Question)
-                question_submit= st.form_submit_button("Valider")
-            if question_submit:
-                if all(Questions):
-                    save_question(selected_empty_profil,Questions)
-                    st.success("Question Enregisté")
-                    if  profil_empty:
-                        st.info("New profil sélectioné")
-                    print(Questions)
-                    print(selected_empty_profil)
-                else:
-                    st.warning("Veuillez remplir toutes les questions")
+            selected_empty_profil = st.selectbox(
+                "Les profils vides :", 
+                [f"{c['profil']}" for c in profil_empty]
+            )
+
+            # Bouton pour générer automatiquement des questions
+            generate_preview_button = st.button("Générer automatiquement des questions", key="generate_button")
+
+            # Prévisualisation et modification des questions générées
+            if generate_preview_button and not st.session_state.auto_generated_questions:
+                try:
+                    # Générer les questions et stocker dans session_state
+                    st.session_state.auto_generated_questions = generate_questionnaire_google({"profil": selected_empty_profil})
+                    # Filtrer les questions vides ou manquantes
+                    st.session_state.auto_generated_questions = [q for q in st.session_state.auto_generated_questions if q]
+                except Exception as e:
+                    st.error(f"Erreur lors de la génération des questions : {e}")
+
+            # Afficher la prévisualisation et permettre la modification des questions
+            if st.session_state.auto_generated_questions:
+                st.subheader("Prévisualisation et Modification des Questions Générées par l'IA")
+
+                # Liste pour stocker les modifications
+                modified_questions = []
+                for i, question in enumerate(st.session_state.auto_generated_questions, 1):
+                    # Afficher chaque question et permettre la modification
+                    modified_question = st.text_input(f"Question {i}", value=question, key=f"generated_question_{i}")
+                    modified_questions.append(modified_question)
+
+                # Bouton pour enregistrer les questions
+                if st.button("Enregistrer les Questions"):
+                    if all(modified_questions):
+                        save_question(selected_empty_profil, modified_questions)
+                        st.success("Questions enregistrées avec succès.")
+                        # Réinitialiser les questions générées
+                        st.session_state.auto_generated_questions = []
+                    else:
+                        st.warning("Veuillez remplir toutes les questions avant l'enregistrement.")
+
+
 if __name__ == "__main__":
     main()
 
