@@ -22,7 +22,13 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto",
 )
-
+poids_kano = {
+    "Indispensable": 1,
+    "Attractive": 2,
+    "Proportionnelle": 3,
+    "Indifferent": 0,
+    "Double-tranchant": -1
+}
 def main():
 
     set_app_theme()
@@ -108,6 +114,7 @@ def main():
             prenom = st.text_input("Prénom *", placeholder="Entrez votre prénom", key="prenom", help="Prénom du candidat")
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
+            competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
             cv_text = extract_text_from_pdf(cv_file)
         
             if st.button("Enregistrer CV"):
