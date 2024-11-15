@@ -602,7 +602,7 @@ def main():
                 st.write(f"**Email du candidat :** {candidate_details['mail']}")
                 
                 # Notation par étoiles
-                sentiment_mapping = ["1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
+                sentiment_mapping = ["1 étoiles", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles"]
                 selected_rating = st.feedback("stars")
                 selected_profil = st.selectbox("les profils disponibles :", 
                                             [f"{c['profil']}" for c in profil_details],help="on doit attrubuer un profil au candidat pour qu'il puisse répondre à des questions liés à son profil")
@@ -612,7 +612,7 @@ def main():
             
             # email = "fabricejordan2001@gmail.com"
             # !test pour avoir le mail du candidat
-            # st.write(st.session_state.selected_candidate['mail'])
+            # st.write(st.session_state.selected_candidate['mail']),
 
             if st.button("Envoyer la recommandation"):
                 if not selected_rating:
