@@ -171,16 +171,106 @@ def update_resultat(resultat_id, updated_data):
     '''
     return execute_query(query, (updated_data['cv_id'], updated_data['offre_id'], updated_data['cosine_similarity'], resultat_id))
 
-def generate_code(mail, code):
+def generate_code(mail, code ,profil):
     """Met à jour la colonne 'code' pour l'utilisateur spécifié par son email."""
     query = '''
         UPDATE "candidat"
-        SET code = %s
+        SET code = %s ,profil =%s
         WHERE mail = %s;
     '''
-    result = execute_query(query, (code, mail))
+    result = execute_query(query, (code, profil,mail))
     if result is None:
-        logging.error(f"Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : {mail}")
+        logging.error(f"Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : {mail} , {profil}")
         return False
     logging.info(f"Code mis à jour avec succès pour l'utilisateur avec l'email : {mail}")
     return True
+
+def checking_profil (profil):
+    # Vérifier si le profil existe déjà dans la table "entretien"
+    check_query = '''
+        SELECT profil FROM "entretien"
+        WHERE profil = %s;
+    '''
+    # si la valeur retourner est none le profil n'existe pas
+    exists = execute_query(check_query, (profil,), fetch_one=True)
+    if exists:
+        # print("le profil existe deja:",exists)
+        return exists
+    else:
+        print("au cas ou il n'existe pas de profil  :", exists)
+        insert_query = ''' INSERT INTO "entretien" (profil) VALUES (%s); '''
+        if execute_query(insert_query, (profil,)): 
+            # print("erreur d'insertion:", insert_query) 
+            return exists
+        else: 
+            # print("\n\nNouveau profil ajouté a la bd:",profil) 
+            return exists
+
+def get_all_profil ():
+    """ Pour afficher tous les profils dans la tables """
+    query = '''SELECT profil , question FROM entretien;'''
+    result = execute_query(query, fetch_all=True)
+    if result:
+        return [{"profil": row[0], "question": row[1]} for row in result]
+    return []
+
+def get_empty_profil():
+    """Pour le selected box pour afficher que les profils qui n'ont pas encore de question """
+    query = '''SELECT profil FROM entretien WHERE question IS NULL;'''
+    result = execute_query(query, fetch_all=True)
+    if result:
+        return [{"profil": row[0]} for row in result]
+    return []
+
+def get_profil_from_candidate (mail) :
+    """recuperer le profil de la table candidat grace a l'email lors de la connexion"""
+    query = '''
+        SELECT profil 
+        FROM candidat 
+        WHERE mail = %s
+        '''
+    result = execute_query(query,(mail,),fetch_one=True)
+    if result :
+        print("Voici le profil:",mail)
+        return result[0]
+    else:
+        print("Echec de  la recuperation")
+        return result
+def save_question(profil, question):
+    """Pour insérer les questions une fois le profil validé """
+    query = '''
+        UPDATE "entretien" 
+        SET question = %s
+        WHERE profil = %s;
+    '''
+    result = execute_query(query ,(question, profil))
+    if result is None:
+        logging.error(f"Mise a jour du profil : {profil}")
+        return False
+    logging.error(f"Erreur : {profil} n'est pas vide")
+    return True
+
+def use_code_once(mail):
+    """"Cet fonction supprime le code qui a été trouvé dans la table candidat pour qu'il soit utilisable une seul fois""" 
+    query =''' 
+    UPDATE "candidat"
+    SET code = NULL
+    WHERE mail = %s;
+    '''
+    result = execute_query(query,(mail,))
+    if result:
+        # print("code de ",mail," supprimé")
+        return result
+    else:
+        # print("Erreur lors de l'execution ")
+        return result
+def check_candidat_connexion(mail,code):
+    """requet pour tester la connexion du candidat sur la page entretien"""
+    query = ''' SELECT * FROM "candidat" WHERE mail = %s AND code = %s; '''
+    result =execute_query(query,(mail,code),fetch_one=True)
+    if result:
+        # print("user trouvé: "," mail:",mail)
+        return result
+    else:
+        # print("mauvais identifiant",mail,code)
+        return result
