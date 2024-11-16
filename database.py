@@ -304,3 +304,10 @@ def delete_profil(profil_name):
     else:
         print("Échec de la suppression du profil ou le profil n'existe pas.")
     return delete_success
+
+def get_profil_questions(profil):
+    """
+    Récupère les questions associées à un profil spécifique depuis la base de données.
+    """
+    query = "SELECT question FROM entretien WHERE profil = %s"
+    return [q[0] for q in execute_query(query, (profil,), fetch_all=True)]

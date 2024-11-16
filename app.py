@@ -216,7 +216,7 @@ def main():
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
                                       help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
         
-        # Ajouter la saisie des compétences avec le modèle de Kano
+        #  saisie des compétences avec le modèle de Kano
         competences_utilisateur = []
         st.write("### Saisir les Compétences")
         competence_counter = 0
