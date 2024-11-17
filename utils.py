@@ -16,10 +16,10 @@ import string
 from database import generate_code
 import google.generativeai as genai
 
-# Configurez votre clé API Google
-genai.configure(api_key="AIzaSyClXnQlAqKXSdvp_jXAg82OlRow6PAVHI8")  
 
-# Créer la configuration du modèle
+api_key = os.getenv("GENAI_API_KEY")
+
+# configuration du modèle
 generation_config = {
     "temperature": 0.7,
     "max_output_tokens": 512,

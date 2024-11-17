@@ -102,7 +102,7 @@ def enregistrer_video_automatique(chemin_video, question_index):
         out.release()
         st.success("Enregistrement terminé après 1 minute. Vidéo sauvegardée.")
 
-        # Proposer le téléchargement de la vidéo
+        # téléchargement de la vidéo
         with open(chemin_video, "rb") as file:
             video_bytes = file.read()
         st.download_button(

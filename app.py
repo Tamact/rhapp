@@ -2,21 +2,24 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
 from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questionnaire_google
-from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates
-from visualization import *
+from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates, load_ai_detector, analyze_text_style, load_references, compare_with_references
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
 from io import StringIO
 import numpy as np
 from database import *
+from visualization import *
 import time
 import asyncio
 from async_operations import process_cvs_async, add_candidate_async
 
+
+
+
 # Définir le thème
 st.set_page_config(
     page_title="GTP",
-    page_icon="",
+    page_icon="favicon.png",
     layout="wide",
     initial_sidebar_state="auto",
 )
@@ -27,6 +30,11 @@ poids_kano = {
     "Indifferent": 0,
     "Double-tranchant": -1
 }
+
+
+
+
+
 def main():
 
     set_app_theme()
@@ -83,30 +91,107 @@ def main():
 
         st.markdown("<h3 style='text-align: center; color: #191970;'>Prêt à trouver le bon talent ? Commencez maintenant !</h3>", unsafe_allow_html=True)
    
-    if selected =="Importer CV":
-        st.header("Importer les CVs")
-        cv_files = st.file_uploader("Téléchargez vos CVs (PDF ou TXT ou docx)", type=["pdf", "txt", "docx"], accept_multiple_files=True)
+    ai_detector = load_ai_detector()
+    reference_texts = load_references()
 
-        # Initialiser une liste pour stocker le texte des CVs
-        cvs_texts = []
-    
+    if selected == "Importer CV":
+        st.header("Importer les CVs")
+        cv_files = st.file_uploader("Téléchargez vos CVs (PDF ou TXT ou DOCX)", type=["pdf", "txt", "docx"], accept_multiple_files=True)
+        
         if cv_files:
-            # Ajouter les noms des fichiers CVs dans une liste pour la sélection
+            
             cv_names = [cv_file.name for cv_file in cv_files]
 
-            # Utiliser une liste déroulante pour sélectionner un CV
+            
             selected_cv_name = st.selectbox("Sélectionnez un CV à visualiser", cv_names)
-
-            # Afficher le contenu du CV sélectionné
-            cv_text=""
+            
+            
+            cv_text = ""
             for cv_file in cv_files:
                 if cv_file.name == selected_cv_name:
                     st.subheader(cv_file.name)
                     if cv_file.type == "application/pdf":
                         pdf_data = cv_file.getvalue()
-
-                        st.markdown(f'<iframe src="data:application/pdf;base64,{base64.b64encode(pdf_data).decode()}" width="700" height="500"></iframe>', unsafe_allow_html=True)
+                        st.markdown(
+                            f'<iframe src="data:application/pdf;base64,{base64.b64encode(pdf_data).decode()}" width="700" height="500"></iframe>',
+                            unsafe_allow_html=True
+                        )
                         cv_text = extract_text_from_pdf(cv_file)
+                    elif cv_file.type in ["text/plain", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
+                        cv_text = cv_file.read().decode("utf-8")
+                        st.text_area("Contenu du CV :", cv_text, height=300)
+
+            if cv_text.strip():
+                
+                st.markdown(
+                    """
+                    <style>
+                    .encadre {
+                        border: 2px solid #E1AD01;
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin: 10px;
+                        background-color: #f9f9f9;
+                    }
+                    .titre-analyse {
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: #343a40;
+                        margin-bottom: 10px;
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+                
+                col1, col2, col3 = st.columns(3)
+
+                # Détection IA
+                with col1:
+                    st.markdown('<div class="encadre">', unsafe_allow_html=True)
+                    st.markdown('<div class="titre-analyse">Détection IA</div>', unsafe_allow_html=True)
+                    with st.spinner("Analyse du contenu pour détecter si le CV est généré par une IA..."):
+                        result = ai_detector(cv_text[:512])
+                        label = result[0]['label']
+                        score = result[0]['score']
+                    
+                    if label == "generated":
+                        st.error(f"⚠️ Ce CV semble être rédigé par une IA avec une probabilité de {score:.2f}.")
+                    else:
+                        st.success(f"✅ Ce CV semble être rédigé par un humain avec une probabilité de {score:.2f}.")
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+                # Analyse du style et de la grammaire
+                with col2:
+                    st.markdown('<div class="encadre">', unsafe_allow_html=True)
+                    st.markdown('<div class="titre-analyse">Analyse du style et de la grammaire</div>', unsafe_allow_html=True)
+                    with st.spinner("Analyse du style et de la grammaire du CV..."):
+                        style_analysis = analyze_text_style(cv_text)
+                    st.write(f"- **Longueur moyenne des phrases** : {style_analysis['avg_sentence_length']:.2f} mots")
+                    st.write(f"- **Nombre de phrases** : {style_analysis['num_sentences']}")
+                    st.write(f"- **Mots inhabituels (longueur > 12)** : {', '.join(style_analysis['unusual_words']) if style_analysis['unusual_words'] else 'Aucun'}")
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+                # Calcul de la similarité
+                with col3:
+                    st.markdown('<div class="encadre">', unsafe_allow_html=True)
+                    st.markdown('<div class="titre-analyse">Indice de similarité</div>', unsafe_allow_html=True)
+                    with st.spinner("Calcul de la similarité avec les références..."):
+                        max_similarity = compare_with_references(cv_text, reference_texts)
+
+                    # Résultat de la similarité
+                    st.write(f"**Indice de similarité de Jaccard :** {max_similarity:.2f}")
+
+                    # Interprétation du score
+                    if max_similarity > 0.8:
+                        st.error("⚠️ Ce CV est très similaire à un CV généré par l'IA.")
+                    elif max_similarity > 0.5:
+                        st.warning("⚠️ Ce CV a des similarités significatives avec les références.")
+                    else:
+                        st.success("✅ Ce CV semble unique.")
+                    st.markdown('</div>', unsafe_allow_html=True)
+
             # Enregistrer CVs
             nom = st.text_input("Nom *", placeholder="Entrez votre nom", key="nom", help="Nom du candidat") 
             prenom = st.text_input("Prénom *", placeholder="Entrez votre prénom", key="prenom", help="Prénom du candidat")
