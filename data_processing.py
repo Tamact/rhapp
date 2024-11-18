@@ -80,7 +80,7 @@ def highlight_best_candidates(row):
     return ['background-color: {}'.format(color) if col == 'Similarité Cosinus' else '' for col in row.index]
 
 
-@st.cache_resource
+# @st.cache_resource
 def load_ai_detector():
     return pipeline("text-classification", model="roberta-base-openai-detector")
 
