@@ -171,7 +171,7 @@ def main_page():
         st.write(f"### Question {current_question + 1}: {question}")
 
         # Fichier temporaire unique pour la vidéo
-        video_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".avi").name
+        video_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4").name
 
         # Démarrer l'enregistrement vidéo avec l'index de la question
         enregistrer_video_automatique(video_temp_file, question_index=current_question)
