@@ -36,6 +36,8 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
     try:
         with conn.cursor() as cursor:
             cursor.execute(query, params)
+            
+            # Gestion des requêtes de sélection
             if fetch_one:
                 result = cursor.fetchone()
                 logging.info(f"Requête exécutée avec succès, résultat unique obtenu : {result}")
@@ -44,8 +46,12 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
                 results = cursor.fetchall()
                 logging.info(f"Requête exécutée avec succès, tous les résultats obtenus : {results}")
                 return results
+            
+            # Si la requête est une mise à jour, insertion ou suppression
             conn.commit()
-            logging.info("Requête d'insertion/mise à jour exécutée avec succès.")
+            affected_rows = cursor.rowcount
+            logging.info(f"Requête d'insertion/mise à jour/suppression exécutée avec succès, lignes affectées : {affected_rows}")
+            return affected_rows > 0  # Retourne True si au moins une ligne a été affectée
     except psycopg2.Error as e:
         logging.error(f"Erreur lors de l'exécution de la requête : {e} - Query: {query} - Params: {params}")
         return None
@@ -274,3 +280,34 @@ def check_candidat_connexion(mail,code):
     else:
         # print("mauvais identifiant",mail,code)
         return result
+
+def update_profil_questions(profil, questions):
+    """
+    Met à jour les questions pour un profil spécifique dans la base de données.
+    """
+    query = '''
+        UPDATE "entretien"
+        SET question = %s
+        WHERE profil = %s;
+    '''
+    execute_query(query, (questions, profil))
+
+
+def delete_profil(profil_name):
+    query = '''
+        DELETE FROM "entretien"
+        WHERE profil = %s;
+    '''
+    delete_success = execute_query(query, (profil_name,))
+    if delete_success:
+        print("Profil supprimé avec succès.")
+    else:
+        print("Échec de la suppression du profil ou le profil n'existe pas.")
+    return delete_success
+
+def get_profil_questions(profil):
+    """
+    Récupère les questions associées à un profil spécifique depuis la base de données.
+    """
+    query = "SELECT question FROM entretien WHERE profil = %s"
+    return [q[0] for q in execute_query(query, (profil,), fetch_all=True)]
