@@ -503,7 +503,7 @@ def main():
                 st.write("Aucun candidat trouvé dans la base de données.")
                 return
 
-            session_state.candidats_df = pd.DataFrame(session_state.candidat, columns=["user_id", "nom", "prenom", "mail", "numero_tlfn"])
+            session_state.candidats_df = pd.DataFrame(session_state.candidat, columns=["user_id", "nom", "prenom", "mail", "numero_tlfn", "profil"])
             st.dataframe(session_state.candidats_df)
     
             # Utiliser session_state pour garder en mémoire le candidat sélectionné

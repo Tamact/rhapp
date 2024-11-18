@@ -17,7 +17,7 @@ from database import generate_code
 import google.generativeai as genai
 
 
-api_key = os.getenv("GENAI_API_KEY")
+genai.configure(api_key="AIzaSyClXnQlAqKXSdvp_jXAg82OlRow6PAVHI8") 
 
 # configuration du modèle
 generation_config = {
@@ -135,7 +135,7 @@ def generate_questionnaire_google(profile_info):
     )
 
     response = chat_session.send_message(
-        "Crée un questionnaire de 10 questions en fonction du profil donné. Donne juste les question, pas besoin de commenter"
+        "Crée un questionnaire de 10 questions en fonction du profil donné. Donne juste les questions, pas besoin de commenter"
     )
 
     # Découper les questions dans la réponse
