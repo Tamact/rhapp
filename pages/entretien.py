@@ -186,7 +186,12 @@ def main_page():
             st.rerun()
     else:
         st.success("Vous avez répondu à toutes les questions.")
-        st.write("Merci pour votre participation !")
+        st.write("Merci pour votre participation !")# Logout button
+        if st.button("Déconnexion"):
+            st.session_state.pop("logged_in")  # Remove the logged_in session variable
+            st.session_state.pop("mail")
+            st.session_state.pop("profil")
+            st.rerun() 
         st.stop()
 
 
