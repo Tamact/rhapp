@@ -194,7 +194,7 @@ def main_page():
             st.session_state.pop("responses")
             st.session_state.pop("current_question")
             st.rerun() 
-        st.stop()
+        # st.stop()
 
 
 # Affichage de la page selon l'état de connexion
