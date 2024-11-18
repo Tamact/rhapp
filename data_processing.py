@@ -5,7 +5,9 @@ import numpy as np
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
-
+from transformers import pipeline
+import spacy
+import json
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -78,3 +80,47 @@ def highlight_best_candidates(row):
     return ['background-color: {}'.format(color) if col == 'Similarité Cosinus' else '' for col in row.index]
 
 
+@st.cache_resource
+def load_ai_detector():
+    return pipeline("text-classification", model="roberta-base-openai-detector")
+
+ai_detector = load_ai_detector
+
+
+def analyze_text_style(text):
+    """
+    Analyse le texte pour détecter des anomalies dans le style et le ton.
+    """
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    avg_sentence_length = sum(len(sent) for sent in doc.sents) / len(list(doc.sents))
+    unusual_words = [token.text for token in doc if token.is_alpha and len(token.text) > 12]
+    return {
+        "avg_sentence_length": avg_sentence_length,
+        "unusual_words": unusual_words,
+        "num_sentences": len(list(doc.sents))
+    }
+
+
+
+# Charger les références depuis references.json
+def load_references(file_path="references.json"):
+    with open(file_path, "r", encoding="utf-8") as file:
+        references = json.load(file)
+    return [ref["cv"] for ref in references]
+
+# Calculer la similarité de Jaccard
+def jaccard_similarity(text1, text2):
+    set1 = set(text1.split())
+    set2 = set(text2.split())
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    return intersection / union if union != 0 else 0
+
+# Comparer un CV soumis avec les références
+def compare_with_references(submitted_cv, reference_texts):
+    max_score = 0
+    for ref in reference_texts:
+        score = jaccard_similarity(submitted_cv, ref)
+        max_score = max(max_score, score)
+    return max_score
