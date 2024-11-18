@@ -30,124 +30,124 @@ ERROR:root:Erreur de connexion ï¿½ la base de donnï¿½es : connection to server a
 
 ERROR:root:Connexion ï¿½ la base de donnï¿½es ï¿½chouï¿½e.
 ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : sitaphadiop30@gmail.com
-ERROR:root:Le profil 'test' existe déjà dans la table 'entretien'. Aucun ajout effectué.
-ERROR:root:Le profil 'test' existe déjà dans la table 'entretien'. Aucun ajout effectué.
+ERROR:root:Le profil 'test' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
+ERROR:root:Le profil 'test' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
 ERROR:root:Erreur lors de l'ajout du profil. 'testing'
-ERROR:root:Le profil 'testing' existe déjà dans la table 'entretien'. Aucun ajout effectué.
+ERROR:root:Le profil 'testing' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
 ERROR:root:Erreur lors de l'ajout du profil. 'dee'
-ERROR:root:Le profil 'dee' existe déjà dans la table 'entretien'. Aucun ajout effectué.
-ERROR:root:Le profil 'test' existe déjà dans la table 'entretien'. Aucun ajout effectué.
-ERROR:root:Le profil 'test' existe déjà dans la table 'entretien'. Aucun ajout effectué.
+ERROR:root:Le profil 'dee' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
+ERROR:root:Le profil 'test' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
+ERROR:root:Le profil 'test' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
 ERROR:root:Erreur lors de l'ajout du profil. 'rer'
-ERROR:root:Le profil 'rer' existe déjà dans la table 'entretien'. Aucun ajout effectué.
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  l'opérateur n'existe pas : text = text[]
+ERROR:root:Le profil 'rer' existe dï¿½jï¿½ dans la table 'entretien'. Aucun ajout effectuï¿½.
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  l'opï¿½rateur n'existe pas : text = text[]
 LINE 4:         WHERE profil = ARRAY['ryyd','wtdwt','wywwy','afssfa'...
                              ^
-HINT:  Aucun opérateur ne correspond au nom donné et aux types d'arguments.
+HINT:  Aucun opï¿½rateur ne correspond au nom donnï¿½ et aux types d'arguments.
 Vous devez ajouter des conversions explicites de type.
  - Query: 
         UPDATE "entretien" 
         SET question = %s
         WHERE profil = %s;
      - Params: ('Ramos', ['ryyd', 'wtdwt', 'wywwy', 'afssfa', 'agsaa', 'gwdgw', 'sgdgs', 'wdhwhw', 'sdhhs', 'sherhr'])
-ERROR:root:Erreur lors de la mise à jour de l'entretien : Ramos
-ERROR:root:Erreur lors de la mise à jour de l'entretien : Ramos
-ERROR:root:Erreur lors de la mise à jour de l'entretien : Data Analyst
-ERROR:root:Erreur lors de la mise à jour de l'entretien : jor
+ERROR:root:Erreur lors de la mise ï¿½ jour de l'entretien : Ramos
+ERROR:root:Erreur lors de la mise ï¿½ jour de l'entretien : Ramos
+ERROR:root:Erreur lors de la mise ï¿½ jour de l'entretien : Data Analyst
+ERROR:root:Erreur lors de la mise ï¿½ jour de l'entretien : jor
 ERROR:root:Mise a jour du profil : test1
 ERROR:root:Mise a jour du profil : test2
 ERROR:root:Mise a jour du profil : profil1
 ERROR:root:Mise a jour du profil : profil2
 ERROR:root:Mise a jour du profil : profil 3
 ERROR:root:Mise a jour du profil : profil 4
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Fabrice
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s; - Params: ('email', 'fzff')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM candidat
                     ^
  - Query: SELECT * from 
             FROM candidat
             WHERE mail =%s AND code =%s; - Params: ('email', 'fzff')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM "candidat"
                     ^
  - Query: SELECT * from 
             FROM "candidat"
             WHERE mail =%s AND code =%s; - Params: ('EMAIL', 'wree')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « FROM »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ FROM ï¿½
 LINE 2:             FROM "candidat"
                     ^
  - Query: SELECT * from 
             FROM "candidat"
             WHERE mail =%s AND code =%s; - Params: ('EMAIL', 'wree')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la relation « User » n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la relation ï¿½ User ï¿½ n'existe pas
 LINE 1: SELECT * FROM "User" WHERE mail = 'fabricejordan2001@gmail.c...
                       ^
  - Query: SELECT * FROM "User" WHERE mail = %s AND code = %s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la relation « User » n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la relation ï¿½ User ï¿½ n'existe pas
 LINE 1: SELECT * FROM "User" WHERE mail = 'fabricejordan2001@gmail.c...
                       ^
  - Query: SELECT * FROM "User" WHERE mail = %s AND code = %s; - Params: ('fabricejordan2001@gmail.com', 'vebLm0')
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ fabricejordan2001 ï¿½
 LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
                            ^
  - Query:  
@@ -155,7 +155,7 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     SET code = NULL
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ fabricejordan2001 ï¿½
 LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
                            ^
  - Query:  
@@ -163,7 +163,7 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     SET code = NULL
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ fabricejordan2001 ï¿½
 LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
                            ^
  - Query:  
@@ -171,7 +171,7 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     SET code = NULL
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ fabricejordan2001 ï¿½
 LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
                            ^
  - Query:  
@@ -179,7 +179,7 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     SET code = NULL
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ fabricejordan2001 ï¿½
 LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
                            ^
  - Query:  
@@ -187,7 +187,7 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     SET code = NULL
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  erreur de syntaxe sur ou près de « fabricejordan2001 »
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  erreur de syntaxe sur ou prï¿½s de ï¿½ fabricejordan2001 ï¿½
 LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
                            ^
  - Query:  
@@ -196,33 +196,7 @@ LINE 4:     WHERE mail = ''fabricejordan2001@gmail.com'';
     WHERE mail = '%s';
      - Params: ('fabricejordan2001@gmail.com',)
 ERROR:root:Mise a jour du profil : Develloppeur Fullstack
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Develloppeur Fullstack
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , Develloppeur Fullstack
 ERROR:root:Mise a jour du profil : NEWprofil
-ERROR:root:Erreur lors de la mise à jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , NEWprofil
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , NEWprofil
 ERROR:root:Mise a jour du profil : aefeta
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732190855&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MDg1NX19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=BlVfkYUR2It5lfRwP3GxndZ1K0-JXnbN3MFOToAZryoIlzEAfyeTxGuqXB%7Er4gq-12QDcCXg9fW3BVlfpZfZrGeF4X6KOS4TRX7e06bzMvyEl5j7Nd6dZAEX2UJxLikx6XolesOtLvitnMp1gucLCWcwETykcpWXP%7EJqViMssVKt6lwfYL2xI7R0wLCHeO6HwixGN9jEI8INejkbc%7ER5TuEDi4jxAIt4ycr-3ZSxgQNG4Q-lK6Ds-f5cE2e8bH2hhQI6Vr9qSn6ge71qeVV2G-ovQeYDjacnS97VzitjikWuwbo8ncCFJHqI1i2cSgP1HW2B1fUfyYvAaHCBrubrNg__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732190855&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MDg1NX19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=BlVfkYUR2It5lfRwP3GxndZ1K0-JXnbN3MFOToAZryoIlzEAfyeTxGuqXB%7Er4gq-12QDcCXg9fW3BVlfpZfZrGeF4X6KOS4TRX7e06bzMvyEl5j7Nd6dZAEX2UJxLikx6XolesOtLvitnMp1gucLCWcwETykcpWXP%7EJqViMssVKt6lwfYL2xI7R0wLCHeO6HwixGN9jEI8INejkbc%7ER5TuEDi4jxAIt4ycr-3ZSxgQNG4Q-lK6Ds-f5cE2e8bH2hhQI6Vr9qSn6ge71qeVV2G-ovQeYDjacnS97VzitjikWuwbo8ncCFJHqI1i2cSgP1HW2B1fUfyYvAaHCBrubrNg__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732190952&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MDk1Mn19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=YJkeknP0CZyo8dG5eg67vJwOuvOycwhjFn3TpA-9Hihp7yi56EMlR8VyDdmCl8JDUZCJ7JAZ3OYyduNcw9ZjamgvAXTnLnrVGUMyB14uYhm5yyMky5u-qDWM14EReRtukgT5bXiNn-MgCcTBRz6quy-gAqQsPhQTm6Z678SQlYeKgIgiA1YGPQVfokrTM9r9uQAXadu9356ip5V3osc8gnH-UaGaHfzG36nudpdEhnvL0DjZlgTVH-lEh92teEVfLjSmI5x6%7EJFXOz3cvwjnDsY49hLwHC5CaZq%7EPvG0aKSCalTSndvzQJ0pueWejNZcjgd%7EOvDF6QHutnaxG4ZUEw__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732191531&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MTUzMX19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=lpPKP0nCB05aLkdBAnStcyQYycq-wyZtwKQS8n4o61z-0FxUyDI-iI9nsK9%7EAKwGiUac-q2WTGx1iH%7EYVQg6ZUFZj9pxJj8-IGMoYiPAPVdsXsuqszZu5Ze3gB8uvcdPPwsG26zAjI9y7y4bLArG69%7Eil5X6u2nr94u-U29%7ErxFrHdW831aGqJyjBNgqW7zYVV8xL0myYHy8Q9RO4lhgmWHy6a5xZqeJ%7E5b0oTNeB2z-eNTPhu0I9q%7EKoEB%7EeOAoSNwLK8Qm0zVYIWngUtythzhd2biMSGdkXJwhikZu6uZcWu24Xu0y2C8ouCDWgypX7mT0byxk7Ga0C0-SKl0MfQ__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732191710&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MTcxMH19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=bkJnSFmJjBwoWtyoEv0qiqaYMKhD3mgyTw1YEQTDablvhO8YxRaLxaEPyunPW%7EuMabZDI-imJwPRm8Wb1HDxLhUWgNeHPtx83L2G874Rp44iTGNtTEA8mrpycg906ymzyDVG6ZCs7pz3eI3gTBIowMb2jPPrUvnj8vW9HhDXcAhdgjGeRapanaFn816yYk4o8QH6l%7EkFw-EabO9mW522AhuHMduQSXoGhN%7EOdvOErtiyWOryIah1zF5uWlOVniRdmYgNdrsa4d6wa7NX4kVb%7E9HDt7M17FQqvp69wARB5pu7Q8MIyYPBqJsOSZU3lcF-jxMNt1p0aWQqzeuHiAlL5Q__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732191710&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MTcxMH19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=bkJnSFmJjBwoWtyoEv0qiqaYMKhD3mgyTw1YEQTDablvhO8YxRaLxaEPyunPW%7EuMabZDI-imJwPRm8Wb1HDxLhUWgNeHPtx83L2G874Rp44iTGNtTEA8mrpycg906ymzyDVG6ZCs7pz3eI3gTBIowMb2jPPrUvnj8vW9HhDXcAhdgjGeRapanaFn816yYk4o8QH6l%7EkFw-EabO9mW522AhuHMduQSXoGhN%7EOdvOErtiyWOryIah1zF5uWlOVniRdmYgNdrsa4d6wa7NX4kVb%7E9HDt7M17FQqvp69wARB5pu7Q8MIyYPBqJsOSZU3lcF-jxMNt1p0aWQqzeuHiAlL5Q__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732192163&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MjE2M319LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=Z4LU9xSaDaXX%7Ewj%7E-Sy29lsK2cwckK43sWhjw0gHCmV3qFVljH50jz3G6imVycWgGGHus-RTBjhSlz06VVmJJpTSaJ7x8V0qwaeWj-qWJdlT4UcYwbWpyStj8oxdrBMXalm88esSDJiQJUH0gIybQQTWrSRrpLxf-G3AmpXYxwdYOdApC4zOCRTxohoK4thW8n16TAJMHgsc2FBxmDYcEPv4zT31neekAa12l16SFas8hwhu435fawrpGRe37oWvA3%7EY2%7ErJ9T59OLhRLgHjvvN3bFg%7Ed%7EQfPniaZA1jurMYhqroapaYfYuWJwObqkKJG-zz8W5OBVSAf6VQ9At1xg__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-WARNING:huggingface_hub.file_download:Error while downloading from https://cdn-lfs.hf.co/roberta-base-openai-detector/3abd6d2b005f5876b945cb5b68ddde04f6e28fbd9c5d6dc5adfb06ba647e0546?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1732192163&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTczMjE5MjE2M319LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5oZi5jby9yb2JlcnRhLWJhc2Utb3BlbmFpLWRldGVjdG9yLzNhYmQ2ZDJiMDA1ZjU4NzZiOTQ1Y2I1YjY4ZGRkZTA0ZjZlMjhmYmQ5YzVkNmRjNWFkZmIwNmJhNjQ3ZTA1NDY%7EcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=Z4LU9xSaDaXX%7Ewj%7E-Sy29lsK2cwckK43sWhjw0gHCmV3qFVljH50jz3G6imVycWgGGHus-RTBjhSlz06VVmJJpTSaJ7x8V0qwaeWj-qWJdlT4UcYwbWpyStj8oxdrBMXalm88esSDJiQJUH0gIybQQTWrSRrpLxf-G3AmpXYxwdYOdApC4zOCRTxohoK4thW8n16TAJMHgsc2FBxmDYcEPv4zT31neekAa12l16SFas8hwhu435fawrpGRe37oWvA3%7EY2%7ErJ9T59OLhRLgHjvvN3bFg%7Ed%7EQfPniaZA1jurMYhqroapaYfYuWJwObqkKJG-zz8W5OBVSAf6VQ9At1xg__&Key-Pair-Id=K3RPWS32NSSJCE: HTTPSConnectionPool(host='cdn-lfs.hf.co', port=443): Read timed out.
-Trying to resume download...
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  syntaxe en entrée invalide pour le type numeric : « 221 77 392 07 48 »
-LINE 3: ...'Fabrice Jordan ', 'fabricejordan2001@gmail.com', '221 77 39...
-                                                             ^
- - Query: 
-        INSERT INTO "candidat" (nom, prenom, mail, numero_tlfn)
-        VALUES (%s, %s, %s, %s)
-        RETURNING user_id;
-     - Params: ('Ramos_cv', 'Fabrice Jordan ', 'fabricejordan2001@gmail.com', '221 77 392 07 48')
-ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
-ERROR:root:Erreur : Fullstack développeur n'est pas vide
