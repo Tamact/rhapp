@@ -416,24 +416,42 @@ def main():
                     show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
                     
                     # Bouton de validation du formulaire
-                    submitted = st.form_submit_button("Afficher les graphiques")
+                    #submitted = st.form_submit_button("Afficher les graphiques")
 
                 # Afficher les graphiques sélectionnés uniquement après validation du formulaire
-                if submitted and not df_results.empty:
-                    if show_bar_chart:
-                        plot_results(df_results)
-                    if show_pie_chart:
-                        plot_pie_chart(df_results)
-                    if show_histogram:
-                        plot_similarity_histogram(df_results)
-                    if show_cumulative_line:
-                        plot_cumulative_similarity(df_results)
-                    if show_scatter_plot:
-                        plot_similarity_scatter(df_results)
-                    if show_boxplot:
-                        plot_similarity_boxplot(df_results)
-                    if show_stacked_bar:
-                        plot_stacked_bar_competences(df_results)
+                #if submitted and not df_results.empty:
+                 #   if show_bar_chart:
+                   #     plot_results(df_results)
+                    #if show_pie_chart:
+                       # plot_pie_chart(df_results)
+                    #if show_histogram:
+                     #   plot_similarity_histogram(df_results)
+                    #if show_cumulative_line:
+                     #   plot_cumulative_similarity(df_results)
+                    #if show_scatter_plot:
+                     #   plot_similarity_scatter(df_results)
+                    #if show_boxplot:
+                     #   plot_similarity_boxplot(df_results)
+                    #if show_stacked_bar:
+                     #   plot_stacked_bar_competences(df_results)
+
+                   
+
+                
+                    
+                    plot_results(df_results)
+            
+                    plot_pie_chart(df_results)
+                
+                    plot_similarity_histogram(df_results)
+                
+                    plot_cumulative_similarity(df_results)
+                
+                    plot_similarity_scatter(df_results)
+                
+                    plot_similarity_boxplot(df_results)
+                
+                    plot_stacked_bar_competences(df_results)
 
 
             # Filtrage par compétences ou résultats 
