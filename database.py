@@ -129,9 +129,9 @@ def get_offre_id(titre, offre_societe):
 
 # Fonctions pour récupérer tous les enregistrements
 def get_all_candidates():
-    query = '''SELECT user_id, nom, prenom, mail, numero_tlfn FROM candidat;'''
+    query = '''SELECT user_id, nom, prenom, mail, numero_tlfn, profil FROM candidat;'''
     result = execute_query(query, fetch_all=True)
-    return [{"user_id": c[0], "nom": c[1], "prenom": c[2], "mail": c[3], "numero_tlfn": c[4]} for c in result] if result else []
+    return [{"user_id": c[0], "nom": c[1], "prenom": c[2], "mail": c[3], "numero_tlfn": c[4], "profil": c[5]} for c in result] if result else []
 
 def get_all_offres():
     query = '''SELECT offre_id, text_offre, offre_societe, titre FROM offre;'''

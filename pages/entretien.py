@@ -4,6 +4,7 @@ import tempfile
 import os
 from database import *
 from utils import set_app_theme
+from gtts import gTTS
 
 # Configuration de la page
 st.set_page_config(
@@ -143,6 +144,15 @@ def charte_confidentialite():
         if st.button("Passer à l'entretien"):
             st.session_state.ready_for_interview = True
 
+# Fonction pour convertir une question en fichier audio
+def generate_audio(question_text):
+    """
+    Génère un fichier audio pour une question donnée.
+    """
+    tts = gTTS(text=question_text, lang="fr")  
+    temp_audio_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+    tts.save(temp_audio_file.name)
+    return temp_audio_file.name
 
 def main_page():
     # Initialiser les variables de session si elles n'existent pas
@@ -170,8 +180,18 @@ def main_page():
         question = questions[current_question]
         st.write(f"### Question {current_question + 1}: {question}")
 
+
+        # Générer le fichier audio pour la question
+        audio_file_path = generate_audio(question)
+
+        # Ajouter un lecteur audio pour la question
+        with open(audio_file_path, "rb") as audio_file:
+            audio_bytes = audio_file.read()
+        st.audio(audio_bytes, format="audio/mp3")
+
+
         # Fichier temporaire unique pour la vidéo
-        video_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".avi").name
+        video_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4").name
 
         # Démarrer l'enregistrement vidéo avec l'index de la question
         enregistrer_video_automatique(video_temp_file, question_index=current_question)
