@@ -57,7 +57,7 @@ def main():
         default_index=0,  
         orientation="horizontal", 
         styles={
-            "container": {"padding": "0!important", "background-color": "#F0F2D6"},  # Couleur de fond du menu
+            "container": {"padding": "0!important", "background-color": "#F0F2F6"},  # Couleur de fond du menu
             "icon": {"color": "#191970", "font-size": "20px"},  # Style des icônes
             "nav-link": {"font-size": "16px", "text-align": "center", "margin": "0px", "--hover-color": "#E1AD01"},
             "nav-link-selected": {"background-color": "#E1AD01"},  # Couleur de l'option sélectionnée
