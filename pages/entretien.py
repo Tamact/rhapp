@@ -85,7 +85,7 @@ def enregistrer_video_automatique(chemin_video, question_index):
         # Début de l'enregistrement
         start_time = cv2.getTickCount()
         fps = cv2.getTickFrequency()
-        recording_duration = 60 * fps  # 60 secondes
+        recording_duration = 15 * fps  # 15 secondes
 
         while (cv2.getTickCount() - start_time) < recording_duration:
             ret, frame = cap.read()
@@ -113,6 +113,11 @@ def enregistrer_video_automatique(chemin_video, question_index):
             mime="video/x-msvideo",
             key=f"download_{question_index}"
         )
+        # Afficher le champ audio en dessous de la vidéo
+        audio_in = st.audio_input("Enregistrez votre réponse audio", key=f"answer_audio_{question_index}")
+        if st.button("Valider l'entrée audio", key=f"validate_audio_{question_index}"):
+            if audio_in:
+                st.audio(audio_in)
 
 def charte_confidentialite():
     """
