@@ -200,3 +200,12 @@ ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'ema
 ERROR:root:Mise a jour du profil : NEWprofil
 ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , NEWprofil
 ERROR:root:Mise a jour du profil : aefeta
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  syntaxe en entrée invalide pour le type numeric : « 77 571 86 82 »
+LINE 3: ...   VALUES ('Thiam', 'Awa', 'bbawa0478@gmail.com', '77 571 86...
+                                                             ^
+ - Query: 
+        INSERT INTO "candidat" (nom, prenom, mail, numero_tlfn)
+        VALUES (%s, %s, %s, %s)
+        RETURNING user_id;
+     - Params: ('Thiam', 'Awa', 'bbawa0478@gmail.com', '77 571 86 82')
+ERROR:root:Erreur lors de l'enregistrement du candidat. Aucun user_id retourné.
