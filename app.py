@@ -282,7 +282,7 @@ def main():
         # Récupérer les CVs et offres d'emploi
         cvs = get_all_cvs()  
         offres = get_all_offres() 
-        cv_options = {(cv["nom"], cv["prenom"]): cv["cv_id"] for cv in cvs}
+        cv_options = {(cv["nom_prenom"]): cv["cv_id"] for cv in cvs}
 
         # Vérifier s'il y a des CVs et des offres
         if not cvs:
@@ -292,11 +292,17 @@ def main():
             st.error("Aucune offre d'emploi trouvée dans la base de données.")
             return
 
+        # Ajouter "Tous" à la liste des CVs pour la sélection multiple
+        cv_options_with_all = ["Tous"] + list(cv_options.keys())
+
         # Sélectionner plusieurs CVs et une seule offre
         selected_cvs = st.multiselect(
             "Sélectionnez un ou plusieurs candidats",
-            options=[(cv['nom'], cv['prenom']) for cv in cvs]  
+            options=cv_options_with_all
         )
+
+        if "Tous" in selected_cvs:
+            selected_cvs = list(cv_options.keys())
 
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
                                       help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
@@ -330,21 +336,21 @@ def main():
             offer_text = next(offre['text_offre'] for offre in offres if offre['titre'] == selected_offer)
             
             # Charger les modèles une seule fois
-            model1, model2, model3, model4 = load_models()
+            model1, model2, model3 = load_models()
 
             # Calculer les vecteurs de l'offre
-            offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text]), model4.encode([offer_text])], axis=1)
+            offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1)
             
             results = []
 
             # Calculer la similarité pour chaque CV sélectionné
             for cv_id in selected_cvs:
-                cv = next(cv for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
+                cv = next(cv for cv in cvs if cv['nom_prenom'] == cv_id)
                 score_similarite = sum(poids_kano[kano_category] for competence, kano_category in competences_utilisateur if competence in cv['competences'])
                 score_similarite = min(score_similarite, 1)   
 
                 # Calculer les vecteurs des CVs 
-                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']]), model4.encode([cv['cv_text']])], axis=1)
+                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']])], axis=1)
 
                 # Calculer la similarité cosinus
                 similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0])
@@ -358,8 +364,8 @@ def main():
             # Tri des résultats par score de similarité
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
             
-            store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
-            store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
+            #store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
+            #store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
 
             # Afficher les résultats
             df_results = pd.DataFrame(results)
@@ -521,7 +527,7 @@ def main():
                 st.write("Aucun candidat trouvé dans la base de données.")
                 return
 
-            session_state.candidats_df = pd.DataFrame(session_state.candidat, columns=["user_id", "nom", "prenom", "mail", "numero_tlfn", "profil"])
+            session_state.candidats_df = pd.DataFrame(session_state.candidat, columns=["user_id", "nom_prenom", "mail", "numero_tlfn", "profil"])
             st.dataframe(session_state.candidats_df)
     
             # Utiliser session_state pour garder en mémoire le candidat sélectionné
@@ -531,12 +537,12 @@ def main():
             # Afficher les candidats dans une liste déroulante pour en sélectionner un
             st.session_state.candidat_selection = st.selectbox(
                 "Sélectionnez un candidat à modifier", 
-                [f"{c['nom']} {c['prenom']}" for c in session_state.candidat], 
+                [f"{c['nom_prenom']}" for c in session_state.candidat], 
                 key="candidate_selectbox"
             )
         
             # Trouver l'enregistrement correspondant au candidat sélectionné
-            candidat_selected = next((c for c in session_state.candidat if f"{c['nom']} {c['prenom']}" == session_state.candidat_selection), None)
+            candidat_selected = next((c for c in session_state.candidat if f"{c['nom_prenom']}" == session_state.candidat_selection), None)
 
             # Stocker le candidat sélectionné dans session_state pour éviter de perdre l'état
             st.session_state.selected_candidate = candidat_selected
