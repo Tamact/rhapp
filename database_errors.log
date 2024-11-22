@@ -200,3 +200,29 @@ ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'ema
 ERROR:root:Mise a jour du profil : NEWprofil
 ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , NEWprofil
 ERROR:root:Mise a jour du profil : aefeta
+ERROR:root:Erreur : nez de parfum n'est pas vide
+ERROR:root:Erreur : chirurgien dentaire n'est pas vide
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne candidat.nom n'existe pas
+LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
+                                                             ^
+ - Query: 
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences
+        FROM cv
+        JOIN candidat ON cv.user_id = candidat.user_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne candidat.nom n'existe pas
+LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
+                                                             ^
+ - Query: 
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences
+        FROM cv
+        JOIN candidat ON cv.user_id = candidat.user_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne candidat.nom n'existe pas
+LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
+                                                             ^
+ - Query: 
+        SELECT cv.cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.nom, candidat.prenom, cv.competences
+        FROM cv
+        JOIN candidat ON cv.user_id = candidat.user_id;
+     - Params: None
