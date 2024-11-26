@@ -193,15 +193,15 @@ def main():
                     st.markdown('</div>', unsafe_allow_html=True)
 
             # Enregistrer CVs
-            nom = st.text_input("Nom *", placeholder="Entrez votre nom", key="nom", help="Nom du candidat") 
-            prenom = st.text_input("Prénom *", placeholder="Entrez votre prénom", key="prenom", help="Prénom du candidat")
+            # nom = st.text_input("Nom *", placeholder="Entrez votre nom", key="nom", help="Nom du candidat") 
+            nom_prenom = st.text_input("Prénom *", placeholder="Entrez votre nom complet", key="nom_prenom", help="nom du candidat")
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
             competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
             cv_text = extract_text_from_pdf(cv_file)
         
             if st.button("Enregistrer CV"):
-                if not nom or not prenom:
+                if not nom_prenom:
                     st.error("Veuillez renseigner les informations du propriétaire.")
                 elif not is_valid_email(mail):
                     st.error("Veuillez entrer une adresse e-mail valide.")
@@ -210,7 +210,7 @@ def main():
                         
                         preprocessed_cv_text = preprocess_text(cv_text)
                         # Enregistrement des informations de l'utilisateur
-                        user_id = save_to_user(nom, prenom, mail, numero_tlfn)
+                        user_id = save_to_user(nom_prenom, mail, numero_tlfn)
 
                         if user_id:  
                             logging.info(f"user_id récupéré avec succès: {user_id}")
@@ -410,16 +410,16 @@ def main():
 
                 # Section des options de sélection des graphiques
                 with st.form("form_selection_graphiques"):
-                    st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
+                    # st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
                     
-                    # Cases à cocher pour les graphiques
-                    show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
-                    show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
-                    show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
-                    show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
-                    show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
-                    show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
-                    show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
+                    # # Cases à cocher pour les graphiques
+                    # show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
+                    # show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
+                    # show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
+                    # show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
+                    # show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
+                    # show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
+                    # show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
                     
                     # Bouton de validation du formulaire
                     #submitted = st.form_submit_button("Afficher les graphiques")
@@ -457,7 +457,8 @@ def main():
                 
                     plot_similarity_boxplot(df_results)
                 
-                    plot_stacked_bar_competences(df_results)
+                    # plot_stacked_bar_competences(df_results)
+                    button_enregistrer=st.form_submit_button("enregistrer les résultats")
 
 
             # Filtrage par compétences ou résultats 
@@ -550,29 +551,29 @@ def main():
             if st.session_state.selected_candidate:
                 # Afficher les informations actuelles du candidat
                 st.write("### Informations actuelles du candidat :")
-                st.write(f"**Nom :** {st.session_state.selected_candidate['nom']}")
-                st.write(f"**Prénom :** {st.session_state.selected_candidate['prenom']}")
+                st.write(f"**Nom :** {st.session_state.selected_candidate['nom_prenom']}")
+                # st.write(f"**Prénom :** {st.session_state.selected_candidate['prenom']}")
                 st.write(f"**Adresse Mail :** {st.session_state.selected_candidate['mail']}")
                 st.write(f"**Numéro de téléphone :** {st.session_state.selected_candidate['numero_tlfn']}")
 
                 st.write("### Modifier les informations du candidat :")
                 # Champs de texte pré-remplis avec les informations actuelles
-                nom = st.text_input("Nom", st.session_state.selected_candidate["nom"], key="nom_input")
-                prenom = st.text_input("Prénom", st.session_state.selected_candidate["prenom"], key="prenom_input")
+                nom = st.text_input("Nom", st.session_state.selected_candidate["nom_prenom"], key="nom_input")
+                # prenom = st.text_input("Prénom", st.session_state.selected_candidate["prenom"], key="prenom_input")
                 mail = st.text_input("Adresse Mail", st.session_state.selected_candidate["mail"], key="mail_input")
                 numero_tlfn = st.text_input("Numéro de téléphone", st.session_state.selected_candidate["numero_tlfn"], key="phone_input")
 
                 # Bouton pour enregistrer les modifications
                 if st.button("Enregistrer les modifications"):
                     updated_data = {
-                        "nom": nom,
-                        "prenom": prenom,
+                        "nom_prenom": nom,
+                        # "prenom": prenom,
                         "mail": mail,
                         "numero_tlfn": numero_tlfn,
                     }
 
                     # Valider les champs avant de mettre à jour
-                    if not nom or not prenom:
+                    if not nom or not nom:
                         st.error("Veuillez remplir tous les champs.")
                     else:
                         # Mettre à jour l'enregistrement dans la base de données
@@ -736,10 +737,10 @@ def main():
         else:
             # Sélecteur de candidat
             selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", 
-                                            [f"{c['nom']} {c['prenom']}" for c in candidates])
+                                            [f"{c['nom_prenom']}" for c in candidates])
 
             # Trouver le candidat sélectionné dans la liste
-            candidate_details = next((c for c in candidates if f"{c['nom']} {c['prenom']}" == selected_candidate), None)
+            candidate_details = next((c for c in candidates if f"{c['nom_prenom']}" == selected_candidate), None)
 
             # Vérifier si le candidat a été trouvé
             if candidate_details:
