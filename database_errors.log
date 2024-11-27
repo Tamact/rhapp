@@ -235,7 +235,7 @@ LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne candidat.nom_prenom n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne candidat.nom_prenom n'existe pas
 LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
                                                              ^
  - Query: 
@@ -243,7 +243,7 @@ LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne candidat.nom_prenom n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne candidat.nom_prenom n'existe pas
 LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
                                                              ^
  - Query: 
@@ -251,7 +251,7 @@ LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne candidat.nom_prenom n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne candidat.nom_prenom n'existe pas
 LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
                                                              ^
  - Query: 
@@ -259,26 +259,28 @@ LINE 2: ...cv_id, cv.user_id, cv.date_insertion, cv.cv_text, candidat.n...
         FROM cv
         JOIN candidat ON cv.user_id = candidat.user_id;
      - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne « nom_prenom » n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne ï¿½ nom_prenom ï¿½ n'existe pas
 LINE 1: SELECT user_id, nom_prenom, mail, numero_tlfn, profil FROM c...
                         ^
  - Query: SELECT user_id, nom_prenom, mail, numero_tlfn, profil FROM candidat; - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la colonne « nom_prenom » n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la colonne ï¿½ nom_prenom ï¿½ n'existe pas
 LINE 1: SELECT user_id, nom_prenom, mail, numero_tlfn, profil FROM c...
                         ^
  - Query: SELECT user_id, nom_prenom, mail, numero_tlfn, profil FROM candidat; - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la relation « offre » n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la relation ï¿½ offre ï¿½ n'existe pas
 LINE 1: ...ELECT offre_id, text_offre, offre_societe, titre FROM offre;
                                                                  ^
  - Query: SELECT offre_id, text_offre, offre_societe, titre FROM offre; - Params: None
-ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  la relation « candidat » n'existe pas
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : ERREUR:  la relation ï¿½ candidat ï¿½ n'existe pas
 LINE 1: ...ser_id, nom_prenom, mail, numero_tlfn, profil FROM candidat;
                                                               ^
  - Query: SELECT user_id, nom_prenom, mail, numero_tlfn, profil FROM candidat; - Params: None
 ERROR:root:Erreur lors de l'enregistrement du CV : save_to_user() takes 3 positional arguments but 4 were given
-ERROR:root:Erreur : Développeur ERP Odoo n'est pas vide
+ERROR:root:Erreur : Dï¿½veloppeur ERP Odoo n'est pas vide
 ERROR:root:Erreur : test n'est pas vide
-ERROR:root:Erreur lors de l'exécution de la requête : server closed the connection unexpectedly
+ERROR:root:Erreur lors de l'exï¿½cution de la requï¿½te : server closed the connection unexpectedly
 	This probably means the server terminated abnormally
 	before or while processing the request.
  - Query: SELECT resultat_id, cv_id, offre_id, cosine_similarity FROM resultat; - Params: None
+ERROR:root:Erreur lors de la mise ï¿½ jour du code pour l'utilisateur avec l'email : fabricejordan2001@gmail.com , NEWprofil
+ERROR:root:Mise a jour du profil : aefeta
