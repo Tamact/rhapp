@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questionnaire_google
+from utils import preprocess_text,is_valid_email, set_app_theme, send_email, generate_questionnaire_google, extract_text_from_pdf
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates, load_ai_detector, analyze_text_style, load_references, compare_with_references
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
@@ -193,8 +193,7 @@ def main():
                     st.markdown('</div>', unsafe_allow_html=True)
 
             # Enregistrer CVs
-            # nom = st.text_input("Nom *", placeholder="Entrez votre nom", key="nom", help="Nom du candidat") 
-            nom_prenom = st.text_input("Prénom *", placeholder="Entrez votre nom complet", key="nom_prenom", help="nom du candidat")
+            nom_prenom = st.text_input("Nom & Prénom*", placeholder="Entrez votre nom & prénom", key="nom", help="Nom et prénom du candidat") 
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
             competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
@@ -409,17 +408,17 @@ def main():
                             f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
 
                 # Section des options de sélection des graphiques
-                with st.form("form_selection_graphiques"):
-                    # st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
+                #with st.form("form_selection_graphiques"):
+                 #   st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
                     
-                    # # Cases à cocher pour les graphiques
-                    # show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
-                    # show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
-                    # show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
-                    # show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
-                    # show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
-                    # show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
-                    # show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
+                    # Cases à cocher pour les graphiques
+                    #show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
+                    #show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
+                    #show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
+                    #show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
+                    #show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
+                    #show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
+                    #show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
                     
                     # Bouton de validation du formulaire
                     #submitted = st.form_submit_button("Afficher les graphiques")
@@ -441,24 +440,21 @@ def main():
                     #if show_stacked_bar:
                      #   plot_stacked_bar_competences(df_results)
 
-                   
 
-                
-                    
-                    plot_results(df_results)
+    
+                #plot_results(df_results)
+        
+                plot_pie_chart(df_results)
             
-                    plot_pie_chart(df_results)
+                plot_similarity_histogram(df_results)
+            
+                plot_cumulative_similarity(df_results)
+            
+                plot_similarity_scatter(df_results)
+            
+                plot_similarity_boxplot(df_results)
                 
-                    plot_similarity_histogram(df_results)
-                
-                    plot_cumulative_similarity(df_results)
-                
-                    plot_similarity_scatter(df_results)
-                
-                    plot_similarity_boxplot(df_results)
-                
-                    # plot_stacked_bar_competences(df_results)
-                    button_enregistrer=st.form_submit_button("enregistrer les résultats")
+                    #plot_stacked_bar_competences(df_results)
 
 
             # Filtrage par compétences ou résultats 
@@ -755,7 +751,7 @@ def main():
                 message_body = st.text_area("Message de recommandation")
 
             
-            email = "fabricejordan2001@gmail.com"
+            
             # !test pour avoir le mail du candidat
             # st.write(st.session_state.selected_candidate['mail']),
 

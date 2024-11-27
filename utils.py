@@ -15,7 +15,7 @@ import random
 import string
 from database import generate_code
 import google.generativeai as genai
-
+import requests
 
 api_key = os.getenv("GENAI_API_KEY")
 genai.configure(api_key=api_key)
@@ -59,6 +59,9 @@ def extract_text_from_pdf(pdf_file):
         print("Erreur lors de l'extraction du texte du PDF:", e)
         return ""
     
+
+
+
 
 
 def is_valid_email(email):
@@ -142,3 +145,5 @@ def generate_questionnaire_google(profile_info):
     # Découper les questions dans la réponse
     questions = response.text.split("\n") if response.text else ["Aucune question générée."]
     return questions
+
+
