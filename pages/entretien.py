@@ -5,7 +5,11 @@ import os
 from database import *
 from utils import set_app_theme
 from gtts import gTTS
-
+import wave
+import threading
+import ffmpeg
+import pyaudio
+import whisper
 # Configuration de la page
 st.set_page_config(
     page_title="GTP-Interview Vidéo",
@@ -60,17 +64,27 @@ def get_questions_for_profil(profil):
     return result[0] if isinstance(result[0], list) else [] if result else []
 
 
-def enregistrer_video_automatique(chemin_video, question_index):
+def enregistrer_video_avec_audio(chemin_video, question_index):
     """
-    Enregistre une vidéo après avoir cliqué sur un bouton et s'arrête automatiquement après 1 minute.
-    Paramètres :
-        chemin_video (str): Chemin pour sauvegarder la vidéo enregistrée.
-        question_index (int): Index de la question actuelle pour générer une clé unique.
+    Enregistre une vidéo avec audio après avoir cliqué sur un bouton.
+    La capture s'arrête automatiquement après 1 minute.
     """
-    st.info(f"Question {question_index + 1}: Cliquez sur 'Commencer l'enregistrement' pour démarrer la vidéo.")
+    st.info(f"Question {question_index + 1}: Cliquez sur 'Commencer l'enregistrement' pour démarrer la vidéo et l'audio.")
     
-    # Bouton pour démarrer l'enregistrement
     if st.button("Commencer l'enregistrement", key=f"start_{question_index}"):
+        # Configuration Audio
+        audio_format = pyaudio.paInt16
+        channels = 1
+        rate = 44100
+        chunk = 1024
+        audio_file = chemin_video.replace(".mp4", ".wav")
+
+        # Initialisation de l'audio
+        audio = pyaudio.PyAudio()
+        stream = audio.open(format=audio_format, channels=channels, rate=rate, input=True, frames_per_buffer=chunk)
+        audio_frames = []
+
+        # Initialisation de la vidéo
         cap = cv2.VideoCapture(0)
         if not cap.isOpened():
             st.error("Erreur : Impossible d'accéder à la caméra.")
@@ -82,7 +96,17 @@ def enregistrer_video_automatique(chemin_video, question_index):
         stframe = st.empty()
         st.info("Enregistrement en cours... L'enregistrement s'arrêtera automatiquement après 1 minute.")
 
-        # Début de l'enregistrement
+        # Démarrer l'enregistrement dans des threads parallèles
+        def record_audio():
+            while recording:
+                data = stream.read(chunk)
+                audio_frames.append(data)
+
+        recording = True
+        audio_thread = threading.Thread(target=record_audio)
+        audio_thread.start()
+
+        # Enregistrement vidéo
         start_time = cv2.getTickCount()
         fps = cv2.getTickFrequency()
         recording_duration = 15 * fps  # 15 secondes
@@ -99,25 +123,71 @@ def enregistrer_video_automatique(chemin_video, question_index):
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             stframe.image(frame, channels="RGB", use_container_width=True)
 
+        # Terminer l'enregistrement
+        recording = False
+        audio_thread.join()
+
+        # Libérer les ressources
         cap.release()
         out.release()
-        st.success("Enregistrement terminé après 1 minute. Vidéo sauvegardée.")
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
 
-        # téléchargement de la vidéo
-        with open(chemin_video, "rb") as file:
-            video_bytes = file.read()
-        st.download_button(
-            label="Télécharger la vidéo",
-            data=video_bytes,
-            file_name=os.path.basename(chemin_video),
-            mime="video/x-msvideo",
-            key=f"download_{question_index}"
-        )
-        # Afficher le champ audio en dessous de la vidéo
-        audio_in = st.audio_input("Enregistrez votre réponse audio", key=f"answer_audio_{question_index}")
-        if st.button("Valider l'entrée audio", key=f"validate_audio_{question_index}"):
-            if audio_in:
-                st.audio(audio_in)
+        # Sauvegarder l'audio
+        with wave.open(audio_file, 'wb') as wf:
+            wf.setnchannels(channels)
+            wf.setsampwidth(audio.get_sample_size(audio_format))
+            wf.setframerate(rate)
+            wf.writeframes(b''.join(audio_frames))
+
+        st.success("Enregistrement terminé après 1 minute. Vidéo et audio sauvegardés.")
+
+        # Fusionner la vidéo et l'audio avec FFmpeg
+        output_file = chemin_video.replace(".mp4", "_final.mp4")
+        try:
+            # Charger la vidéo et l'audio en tant qu'entrées FFmpeg
+            video_input = ffmpeg.input(chemin_video)  # Fichier vidéo
+            audio_input = ffmpeg.input(audio_file)    # Fichier audio
+
+            # Fusionner la vidéo et l'audio dans un fichier de sortie
+            ffmpeg.output(video_input, audio_input, output_file, vcodec='copy', acodec='aac').run(overwrite_output=True)
+
+            st.success("Vidéo et audio fusionnés avec succès.")
+
+            # Télécharger la vidéo fusionnée
+            with open(output_file, "rb") as file:
+                video_bytes = file.read()
+            st.download_button(
+                label="Télécharger la vidéo fusionnée",
+                data=video_bytes,
+                file_name=os.path.basename(output_file),
+                mime="video/mp4",
+                key=f"download_{question_index}"
+            )
+        except Exception as e:
+            st.error(f"Erreur lors de la fusion de la vidéo et de l'audio : {e}")
+
+def extract_audio_from_video(video_path, audio_path):
+    """
+    Extrait l'audio d'une vidéo et le sauvegarde dans un fichier audio.
+    :param video_path: Chemin de la vidéo d'entrée.
+    :param audio_path: Chemin pour sauvegarder l'audio.
+    """
+    ffmpeg.input(video_path).output(audio_path, format="wav").run(overwrite_output=True)
+    print(f"Audio extrait : {audio_path}")
+
+
+
+def transcribe_audio_with_whisper(audio_path):
+    """
+    Transcrit l'audio en texte à l'aide de Whisper.
+    :param audio_path: Chemin vers le fichier audio.
+    :return: Texte transcrit.
+    """
+    model = whisper.load_model("base")  # Choisissez un modèle : tiny, base, small, medium, large
+    result = model.transcribe(audio_path)
+    return result["text"]
 
 def charte_confidentialite():
     """
@@ -159,6 +229,22 @@ def generate_audio(question_text):
     tts.save(temp_audio_file.name)
     return temp_audio_file.name
 
+def enregistrer_video_avec_audio_et_transcription(chemin_video, question_index):
+    """
+    Enregistre une vidéo avec audio, fusionne les flux, et effectue la transcription de l'audio.
+    """
+    # Appeler la logique d'enregistrement de la vidéo et de l'audio existante
+    enregistrer_video_avec_audio(chemin_video, question_index)
+
+    # Transcription de l'audio
+    audio_file = chemin_video.replace(".mp4", ".wav")  # Fichier audio généré précédemment
+    if os.path.exists(audio_file):
+        st.info("Transcription en cours...")
+        transcription = transcribe_audio_with_whisper(audio_file)
+        st.text_area("Transcription de l'entretien :", transcription, height=300)
+    else:
+        st.error("Erreur : le fichier audio est introuvable pour la transcription.")
+
 def main_page():
     # Initialiser les variables de session si elles n'existent pas
     if 'confidentiality_accepted' not in st.session_state:
@@ -199,7 +285,7 @@ def main_page():
         video_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4").name
 
         # Démarrer l'enregistrement vidéo avec l'index de la question
-        enregistrer_video_automatique(video_temp_file, question_index=current_question)
+        enregistrer_video_avec_audio_et_transcription(video_temp_file, question_index=current_question)
 
         # Passer à la question suivante
         if st.button("Question Suivante", key=f"next_{current_question}"):

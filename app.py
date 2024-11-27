@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-from utils import preprocess_text, extract_text_from_pdf, is_valid_email, set_app_theme, send_email, generate_questionnaire_google
+from utils import preprocess_text,is_valid_email, set_app_theme, send_email, generate_questionnaire_google, extract_text_from_pdf
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates, load_ai_detector, analyze_text_style, load_references, compare_with_references
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
@@ -193,15 +193,14 @@ def main():
                     st.markdown('</div>', unsafe_allow_html=True)
 
             # Enregistrer CVs
-            nom = st.text_input("Nom *", placeholder="Entrez votre nom", key="nom", help="Nom du candidat") 
-            prenom = st.text_input("Prénom *", placeholder="Entrez votre prénom", key="prenom", help="Prénom du candidat")
+            nom_prenom = st.text_input("Nom & Prénom*", placeholder="Entrez votre nom & prénom", key="nom", help="Nom et prénom du candidat") 
             mail = st.text_input("Adresse Mail", placeholder="Entrez votre adresse mail ", key="mail", help="Adresse e-mail valide")
             numero_tlfn= st.text_input("Numéro de téléphone", placeholder="Entrez votre numéro de téléphone", key="numero tlfn", help="Numéro de téléphone du candidat")
             competences = st.text_area("Compétences *", placeholder="Entrez les compétences séparées par des virgules", key="competences", help="Liste des compétences du candidat")
             cv_text = extract_text_from_pdf(cv_file)
         
             if st.button("Enregistrer CV"):
-                if not nom or not prenom:
+                if not nom_prenom:
                     st.error("Veuillez renseigner les informations du propriétaire.")
                 elif not is_valid_email(mail):
                     st.error("Veuillez entrer une adresse e-mail valide.")
@@ -210,7 +209,7 @@ def main():
                         
                         preprocessed_cv_text = preprocess_text(cv_text)
                         # Enregistrement des informations de l'utilisateur
-                        user_id = save_to_user(nom, prenom, mail, numero_tlfn)
+                        user_id = save_to_user(nom_prenom, mail, numero_tlfn)
 
                         if user_id:  
                             logging.info(f"user_id récupéré avec succès: {user_id}")
@@ -282,7 +281,7 @@ def main():
         # Récupérer les CVs et offres d'emploi
         cvs = get_all_cvs()  
         offres = get_all_offres() 
-        cv_options = {(cv["nom"], cv["prenom"]): cv["cv_id"] for cv in cvs}
+        cv_options = {(cv["nom_prenom"]): cv["cv_id"] for cv in cvs}
 
         # Vérifier s'il y a des CVs et des offres
         if not cvs:
@@ -292,11 +291,17 @@ def main():
             st.error("Aucune offre d'emploi trouvée dans la base de données.")
             return
 
+        # Ajouter "Tous" à la liste des CVs pour la sélection multiple
+        cv_options_with_all = ["Tous"] + list(cv_options.keys())
+
         # Sélectionner plusieurs CVs et une seule offre
         selected_cvs = st.multiselect(
             "Sélectionnez un ou plusieurs candidats",
-            options=[(cv['nom'], cv['prenom']) for cv in cvs]  
+            options=cv_options_with_all
         )
+
+        if "Tous" in selected_cvs:
+            selected_cvs = list(cv_options.keys())
 
         selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
                                       help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
@@ -330,21 +335,21 @@ def main():
             offer_text = next(offre['text_offre'] for offre in offres if offre['titre'] == selected_offer)
             
             # Charger les modèles une seule fois
-            model1, model2, model3, model4 = load_models()
+            model1, model2, model3 = load_models()
 
             # Calculer les vecteurs de l'offre
-            offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text]), model4.encode([offer_text])], axis=1)
+            offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1)
             
             results = []
 
             # Calculer la similarité pour chaque CV sélectionné
             for cv_id in selected_cvs:
-                cv = next(cv for cv in cvs if cv['nom'] == cv_id[0] and cv['prenom'] == cv_id[1])
+                cv = next(cv for cv in cvs if cv['nom_prenom'] == cv_id)
                 score_similarite = sum(poids_kano[kano_category] for competence, kano_category in competences_utilisateur if competence in cv['competences'])
                 score_similarite = min(score_similarite, 1)   
 
                 # Calculer les vecteurs des CVs 
-                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']]), model4.encode([cv['cv_text']])], axis=1)
+                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']])], axis=1)
 
                 # Calculer la similarité cosinus
                 similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0])
@@ -358,8 +363,8 @@ def main():
             # Tri des résultats par score de similarité
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
             
-            store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
-            store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
+            #store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
+            #store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
 
             # Afficher les résultats
             df_results = pd.DataFrame(results)
@@ -403,17 +408,17 @@ def main():
                             f"<h3>Pourcentage des meilleurs candidats </h3><h2>{best_candidates_percentage:.2f}%</h2></div>", unsafe_allow_html=True)
 
                 # Section des options de sélection des graphiques
-                with st.form("form_selection_graphiques"):
-                    st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
+                #with st.form("form_selection_graphiques"):
+                 #   st.write("Sélectionnez les graphiques que vous souhaitez afficher pour analyser la similarité entre les CVs et l'offre d'emploi.")
                     
                     # Cases à cocher pour les graphiques
-                    show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
-                    show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
-                    show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
-                    show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
-                    show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
-                    show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
-                    show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
+                    #show_bar_chart = st.checkbox("Graphique en Barres - Similarité des CVs")
+                    #show_pie_chart = st.checkbox("Diagramme en Secteurs - Répartition des Similarités")
+                    #show_histogram = st.checkbox("Histogramme - Distribution des Similarités")
+                    #show_cumulative_line = st.checkbox("Graphique Linéaire - Similarité Cumulative")
+                    #show_scatter_plot = st.checkbox("Nuage de Points - Similarité de chaque CV")
+                    #show_boxplot = st.checkbox("Box Plot - Répartition des Similarités")
+                    #show_stacked_bar = st.checkbox("Barres Empilées - Similarité par Compétence")
                     
                     # Bouton de validation du formulaire
                     #submitted = st.form_submit_button("Afficher les graphiques")
@@ -435,23 +440,21 @@ def main():
                     #if show_stacked_bar:
                      #   plot_stacked_bar_competences(df_results)
 
-                   
 
-                
-                    
-                    plot_results(df_results)
+    
+                #plot_results(df_results)
+        
+                plot_pie_chart(df_results)
             
-                    plot_pie_chart(df_results)
+                plot_similarity_histogram(df_results)
+            
+                plot_cumulative_similarity(df_results)
+            
+                plot_similarity_scatter(df_results)
+            
+                plot_similarity_boxplot(df_results)
                 
-                    plot_similarity_histogram(df_results)
-                
-                    plot_cumulative_similarity(df_results)
-                
-                    plot_similarity_scatter(df_results)
-                
-                    plot_similarity_boxplot(df_results)
-                
-                    plot_stacked_bar_competences(df_results)
+                    #plot_stacked_bar_competences(df_results)
 
 
             # Filtrage par compétences ou résultats 
@@ -521,7 +524,7 @@ def main():
                 st.write("Aucun candidat trouvé dans la base de données.")
                 return
 
-            session_state.candidats_df = pd.DataFrame(session_state.candidat, columns=["user_id", "nom", "prenom", "mail", "numero_tlfn", "profil"])
+            session_state.candidats_df = pd.DataFrame(session_state.candidat, columns=["user_id", "nom_prenom", "mail", "numero_tlfn", "profil"])
             st.dataframe(session_state.candidats_df)
     
             # Utiliser session_state pour garder en mémoire le candidat sélectionné
@@ -531,12 +534,12 @@ def main():
             # Afficher les candidats dans une liste déroulante pour en sélectionner un
             st.session_state.candidat_selection = st.selectbox(
                 "Sélectionnez un candidat à modifier", 
-                [f"{c['nom']} {c['prenom']}" for c in session_state.candidat], 
+                [f"{c['nom_prenom']}" for c in session_state.candidat], 
                 key="candidate_selectbox"
             )
         
             # Trouver l'enregistrement correspondant au candidat sélectionné
-            candidat_selected = next((c for c in session_state.candidat if f"{c['nom']} {c['prenom']}" == session_state.candidat_selection), None)
+            candidat_selected = next((c for c in session_state.candidat if f"{c['nom_prenom']}" == session_state.candidat_selection), None)
 
             # Stocker le candidat sélectionné dans session_state pour éviter de perdre l'état
             st.session_state.selected_candidate = candidat_selected
@@ -730,10 +733,10 @@ def main():
         else:
             # Sélecteur de candidat
             selected_candidate = st.selectbox("Choisissez un candidat à évaluer :", 
-                                            [f"{c['nom']} {c['prenom']}" for c in candidates])
+                                            [f"{c['nom_prenom']}" for c in candidates])
 
             # Trouver le candidat sélectionné dans la liste
-            candidate_details = next((c for c in candidates if f"{c['nom']} {c['prenom']}" == selected_candidate), None)
+            candidate_details = next((c for c in candidates if f"{c['nom_prenom']}" == selected_candidate), None)
 
             # Vérifier si le candidat a été trouvé
             if candidate_details:
