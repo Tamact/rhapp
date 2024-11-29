@@ -662,11 +662,11 @@ def main():
             st.header("Gestion des cvs")
             st.write("""Cette page est dédiée à la visualistion des cvs""")
             
-            st.session_state.cv = get_all_cvs()
+            st.session_state.cv = get_all_cvs_with_join()
             if not session_state.cv:
                 st.write("Aucun cv trouvé dans la base de données.")
                 return
-            session_state.cv_df=pd.DataFrame(session_state.cv, columns=["cv_id", "user_id", "date_insertion", "cv_text"])
+            session_state.cv_df=pd.DataFrame(session_state.cv, columns=[ "nom_prenom", "numero_tlfn" ,"mail"  ,"cv_text" ,"date_insertion"])
             st.dataframe(session_state.cv_df)
             
         if selected1 == "Gestion Profil/Question":

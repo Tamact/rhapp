@@ -146,7 +146,13 @@ def get_all_cvs():
     '''
     result = execute_query(query, fetch_all=True)
     return [{"cv_id": v[0], "user_id": v[1], "date_insertion": v[2], "cv_text": v[3], "nom_prenom": v[4], "competences": v[5]} for v in result] if result else []
-
+def get_all_cvs_with_join():
+    query = '''
+        SELECT  nom_prenom, numero_tlfn ,mail  ,cv.cv_text ,cv.date_insertion FROM candidat 
+        INNER JOIN cv ON candidat.user_id = cv.user_id;
+    '''
+    result = execute_query(query, fetch_all=True)
+    return [{"nom_prenom": v[0], "numero_tlfn": v[1], "mail": v[2], "cv_text": v[3], "date_insertion": v[4]} for v in result] if result else []
 def get_all_resultats():
     query = '''SELECT resultat_id, cv_id, offre_id, cosine_similarity FROM resultat;'''
     result = execute_query(query, fetch_all=True)

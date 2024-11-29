@@ -185,8 +185,8 @@ def transcribe_audio_with_whisper(audio_path):
     :param audio_path: Chemin vers le fichier audio.
     :return: Texte transcrit.
     """
-    model = whisper.load_model("base")  # Choisissez un modèle : tiny, base, small, medium, large
-    result = model.transcribe(audio_path)
+    model = whisper.load_model("medium")  # Choisissez un modèle : tiny, base, small, medium, large
+    result = model.transcribe(audio_path,language='fr')
     return result["text"]
 
 def charte_confidentialite():
