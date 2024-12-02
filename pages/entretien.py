@@ -228,7 +228,7 @@ def generate_audio(question_text):
     temp_audio_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
     tts.save(temp_audio_file.name)
     return temp_audio_file.name
-
+# test
 def enregistrer_video_avec_audio_et_transcription(chemin_video, question_index):
     """
     Enregistre une vidéo avec audio, fusionne les flux, et effectue la transcription de l'audio.
