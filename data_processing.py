@@ -33,7 +33,7 @@ def store_vectors_in_qdrant(vectors, names):
         for name, vector in zip(names, vectors)
     ]
     try:
-        client.upsert(collection_name="cv_collection99", points=points)
+        client.upsert(collection_name="cv_collection", points=points)
         st.success("Vecteurs de CVs stockés avec succès dans Qdrant.")
     except Exception as e:
         st.error(f"Erreur lors du stockage des vecteurs : {str(e)}")
@@ -57,7 +57,7 @@ def store_offer_vector_in_qdrant(offer_vector, offer_name):
 
     try:
         client.upsert(
-            collection_name="offer_collection99",
+            collection_name="offer_collection",
             points=[point]
         )
         st.success("Vecteur de l'offre d'emploi stocké avec succès dans Qdrant.")

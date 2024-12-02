@@ -15,7 +15,7 @@ import random
 import string
 from database import generate_code
 import google.generativeai as genai
-import requests
+
 
 api_key = os.getenv("GENAI_API_KEY")
 genai.configure(api_key=api_key)
@@ -147,3 +147,42 @@ def generate_questionnaire_google(profile_info):
     return questions
 
 
+def categorize_skills_with_kano(text_offre):
+    """
+    Utilise Gemini AI pour catégoriser les compétences d'une fiche de poste ou d'un CV selon le modèle de Kano.
+
+    :param offre_text: Le contenu du CV ou de la fiche de poste.
+    :return: Dictionnaire contenant les compétences catégorisées.
+    """
+    # Initialiser une session de chat avec l'API Gemini
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config={
+            "temperature": 0.5,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 8192,
+            "response_mime_type": "text/plain",
+        },
+    )
+    
+    chat_session = model.start_chat(
+        history=[
+            {
+                "role": "user",
+                "parts": [
+                    f"Voici un extrait de l'offre : {text_offre}. "
+                    "Catégorise les compétences en fonction du modèle de Kano (Indispensable, Proportionnelle, Attractive, Indifférente). "
+                    "Donne juste les compétences classées sans explication ni commentaire. Enléve aussi les notes",
+                ],
+            }
+        ]
+    )
+
+    # Envoyer une requête pour générer la catégorisation
+    response = chat_session.send_message("Catégorise les compétences selon le modèle de Kano sans note ni commentaire.")
+    
+    if response.text:
+        return response.text
+    else:
+        return "Aucune réponse générée."
