@@ -1,0 +1,105 @@
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,offre.titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None
+ERROR:root:Erreur lors de l'exécution de la requête : ERREUR:  entrée manquante de la clause FROM pour la table « offre »
+LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+                                                     ^
+ - Query: 
+        SELECT resultat_id ,titre, cosine_similarity FROM resultat 
+        INNER JOIN cv ON resultat.offre_id = offre.offre_id;
+     - Params: None

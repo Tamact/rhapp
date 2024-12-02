@@ -650,12 +650,12 @@ def main():
             st.write("""Cette page est dédiée à la visualisation des résultats""")
 
             #Récupérer les résultats
-            st.session_state.resultat = get_all_resultats()
+            st.session_state.resultat = get_all_resultat_join()
             if not session_state.resultat:
                 st.write("Aucun résultat trouvé dans la base de données.")
                 return
     
-            session_state.resultat_df = pd.DataFrame(session_state.resultat, columns=["resultat_id", "cv_id", "offre_id", "cosine_similarity"])
+            session_state.resultat_df = pd.DataFrame(session_state.resultat, columns=["nom_prenom" , "cosine_similarity","titre"])
             st.dataframe(session_state.resultat_df)
 
         if selected1 == "Gestion des cvs":

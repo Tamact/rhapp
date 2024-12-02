@@ -158,6 +158,25 @@ def get_all_resultats():
     result = execute_query(query, fetch_all=True)
     return [{"resultat_id": r[0], "cv_id": r[1], "offre_id": r[2], "cosine_similarity": r[3]} for r in result] if result else []
 
+def get_all_resultat_join():
+    query = '''
+        SELECT 
+    c.nom_prenom AS "Nom du candidat",
+    r.cosine_similarity AS "Similarité Cosinus",
+        o.titre AS "Titre de l'offre"
+    FROM 
+        resultat r
+    JOIN 
+        cv ON r.cv_id = cv.cv_id
+    JOIN 
+        candidat c ON cv.user_id = c.user_id
+    JOIN 
+        offre o ON r.offre_id = o.offre_id;
+
+    '''
+    result = execute_query(query, fetch_all=True)
+    # print(result)
+    return [{"nom_prenom": v[0], "cosine_similarity": v[1], "titre": v[2]} for v in result] if result else []
 # Fonctions de mise à jour
 def update_candidate(user_id, updated_data):
     query = '''
