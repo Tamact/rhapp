@@ -103,3 +103,4 @@ LINE 3:         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
         SELECT resultat_id ,titre, cosine_similarity FROM resultat 
         INNER JOIN cv ON resultat.offre_id = offre.offre_id;
      - Params: None
+ERROR:root:Erreur :  Développeur full stack n'est pas vide
