@@ -9,7 +9,8 @@ import wave
 import threading
 import ffmpeg
 import pyaudio
-import whisper
+import google.generativeai as genai  # Ajout de l'import pour Gemini
+
 # Configuration de la page
 st.set_page_config(
     page_title="GTP-Interview Vidéo",
@@ -32,6 +33,9 @@ if 'current_question' not in st.session_state:
 if 'responses' not in st.session_state:
     st.session_state.responses = []
 
+# Configuration de Gemini
+api_key = os.getenv("GENAI_API_KEY")
+genai.configure(api_key=api_key)
 
 # Fonction pour afficher la page de connexion
 def login_page():
@@ -109,7 +113,7 @@ def enregistrer_video_avec_audio(chemin_video, question_index):
         # Enregistrement vidéo
         start_time = cv2.getTickCount()
         fps = cv2.getTickFrequency()
-        recording_duration = 15 * fps  # 15 secondes
+        recording_duration = 15 * fps  # 60 secondes
 
         while (cv2.getTickCount() - start_time) < recording_duration:
             ret, frame = cap.read()
@@ -178,16 +182,31 @@ def extract_audio_from_video(video_path, audio_path):
     print(f"Audio extrait : {audio_path}")
 
 
-
-def transcribe_audio_with_whisper(audio_path):
-    """
-    Transcrit l'audio en texte à l'aide de Whisper.
-    :param audio_path: Chemin vers le fichier audio.
-    :return: Texte transcrit.
-    """
-    model = whisper.load_model("base")  # Choisissez un modèle : tiny, base, small, medium, large
-    result = model.transcribe(audio_path)
-    return result["text"]
+# Fonction de transcription avec Gemini
+def transcribe_audio_with_gemini(audio_path):
+    """Transcrit un fichier audio en utilisant Gemini."""
+    file = genai.upload_file(audio_path, mime_type="audio/ogg")
+    st.info(f"Audio uploaded to Gemini: {file.uri}")
+    
+    chat_session = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config={
+            "temperature": 1,
+            "top_p": 0.95,
+            "top_k": 64,
+            "max_output_tokens": 8192,
+            "response_mime_type": "text/plain",
+        }
+    ).start_chat(
+        history=[
+            {
+                "role": "user",
+                "parts": [file],
+            }
+        ]
+    )
+    response = chat_session.send_message("Veuillez transcrire cet audio.")
+    return response.text
 
 def charte_confidentialite():
     """
@@ -236,11 +255,11 @@ def enregistrer_video_avec_audio_et_transcription(chemin_video, question_index):
     # Appeler la logique d'enregistrement de la vidéo et de l'audio existante
     enregistrer_video_avec_audio(chemin_video, question_index)
 
-    # Transcription de l'audio
+    # Transcription de l'audio avec Gemini (remplacer Whisper par Gemini)
     audio_file = chemin_video.replace(".mp4", ".wav")  # Fichier audio généré précédemment
     if os.path.exists(audio_file):
-        st.info("Transcription en cours...")
-        transcription = transcribe_audio_with_whisper(audio_file)
+        st.info("Transcription en cours avec Gemini...")  # Mise à jour du message
+        transcription = transcribe_audio_with_gemini(audio_file)  # Utilisation de Gemini
         st.text_area("Transcription de l'entretien :", transcription, height=300)
     else:
         st.error("Erreur : le fichier audio est introuvable pour la transcription.")

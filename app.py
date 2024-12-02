@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-from utils import preprocess_text,is_valid_email, set_app_theme, send_email, generate_questionnaire_google, extract_text_from_pdf
+from utils import preprocess_text,is_valid_email, set_app_theme, send_email, generate_questionnaire_google, extract_text_from_pdf, categorize_skills_with_kano
 from data_processing import store_vectors_in_qdrant, compute_cosine_similarity, store_offer_vector_in_qdrant, load_models, highlight_best_candidates, load_ai_detector, analyze_text_style, load_references, compare_with_references
 from filtre import filter_cvs_by_skills, filter_cvs_by_results
 import base64
@@ -270,7 +270,7 @@ def main():
                 except Exception as e:
                     st.erro(f"Une erreur s'est produite : {e}")
 
-    if selected =="Calculer Similarité":
+    if selected == "Calculer Similarité":
         # Initialiser les variables dans session_state si elles n'existent pas
         if 'df_results' not in st.session_state:
             st.session_state['df_results'] = pd.DataFrame()
@@ -279,8 +279,8 @@ def main():
 
         st.header("Calcul de similarité entre CVs et offre")
         # Récupérer les CVs et offres d'emploi
-        cvs = get_all_cvs()  
-        offres = get_all_offres() 
+        cvs = get_all_cvs()
+        offres = get_all_offres()
         cv_options = {(cv["nom_prenom"]): cv["cv_id"] for cv in cvs}
 
         # Vérifier s'il y a des CVs et des offres
@@ -303,23 +303,52 @@ def main():
         if "Tous" in selected_cvs:
             selected_cvs = list(cv_options.keys())
 
-        selected_offer = st.selectbox("Sélectionnez une Offre d'emploi", [offre['titre'] for offre in offres],
-                                      help="Sélectionnez une offre d'emploi pour évaluer la similarités avec les CVs")
-        
-        #  saisie des compétences avec le modèle de Kano
-        competences_utilisateur = []
-        st.write("### Saisir les Compétences")
-        competence_counter = 0
+        selected_offer = st.selectbox(
+            "Sélectionnez une Offre d'emploi",
+            [offre['titre'] for offre in offres],
+            help="Sélectionnez une offre d'emploi pour évaluer la similarité avec les CVs"
+        )
 
-        while True:
-            competence = st.text_input(f"Entrez une compétence {competence_counter + 1} (ou laissez vide pour terminer) :", key=f"competence_{competence_counter}")
-            if competence:
-                kano_category = st.selectbox(f"Sélectionnez la catégorie Kano pour '{competence}':", 
-                    options=["Indispensable", "Attractive", "Proportionnelle", "Indifferent", "Double-tranchant"], key=f"kano_category_{competence_counter}")
-                competences_utilisateur.append((competence.strip(), kano_category))
-                competence_counter += 1 
+        # Vérifier si une offre a été sélectionnée
+        if selected_offer:
+            # Récupérer le texte de l'offre sélectionnée
+            text_offre = next(
+                (offre['text_offre'] for offre in offres if offre['titre'] == selected_offer),
+                None  # Valeur par défaut si aucune correspondance n'est trouvée
+            )
+
+            if text_offre:
+                with st.spinner("Analyse de l'offre avec Gemini AI..."):
+                    categorized_skills = categorize_skills_with_kano(text_offre)
+
+                if categorized_skills:
+                    st.write("### Compétences catégorisées selon le modèle de Kano :")
+                    competences_utilisateur = []
+
+                    # Extraire et afficher les compétences par catégorie
+                    categories = ["Indispensable", "Proportionnelle", "Attractive", "Indifférente", "Double tranchant"]
+                    for category in categories:
+                        if f"**{category}:**" in categorized_skills:
+                            st.subheader(f"**{category}:**")
+                            category_section = categorized_skills.split(f"**{category}:**")[1].split("**")[0].strip()
+                            skills = [skill.strip() for skill in category_section.split("\n") if skill.strip()]
+                            competences_utilisateur.extend([(skill, category) for skill in skills])
+                            for skill in skills:
+                                st.write(f"- {skill}")
+
+                    # Afficher les compétences récupérées
+                    if competences_utilisateur:
+                        st.success("Les compétences ont été automatiquement récupérées et classées.")
+                    else:
+                        st.warning("Aucune compétence n'a pu être extraite de l'offre.")
+
+                else:
+                    st.warning("Le modèle n'a pas pu générer de compétences catégorisées.")
+
             else:
-                break
+                st.warning("Le texte de l'offre sélectionnée est introuvable.")
+        else:
+            st.warning("Veuillez sélectionner une offre avant de générer les compétences.")
 
         # Bouton pour calculer la similarité
         if st.button("Calculer la Similarité"):
@@ -331,6 +360,7 @@ def main():
                 st.error("Veuillez sélectionner une offre d'emploi.")
                 return
 
+
             # Récupérer les textes correspondants (déjà prétraités)
             offer_text = next(offre['text_offre'] for offre in offres if offre['titre'] == selected_offer)
             
@@ -340,39 +370,58 @@ def main():
             # Calculer les vecteurs de l'offre
             offer_vector = np.concatenate([model1.encode([offer_text]), model2.encode([offer_text]), model3.encode([offer_text])], axis=1)
             
-            results = []
-
             # Calculer la similarité pour chaque CV sélectionné
+            results = []
             for cv_id in selected_cvs:
-                cv = next(cv for cv in cvs if cv['nom_prenom'] == cv_id)
-                score_similarite = sum(poids_kano[kano_category] for competence, kano_category in competences_utilisateur if competence in cv['competences'])
-                score_similarite = min(score_similarite, 1)   
+                # Récupérer le CV correspondant
+                cv = next((cv for cv in cvs if cv['nom_prenom'] == cv_id), None)
+                if not cv or not cv.get('cv_text'):
+                    st.warning(f"Le texte du CV pour {cv_id} est introuvable ou vide. Il sera ignoré.")
+                    continue
 
-                # Calculer les vecteurs des CVs 
-                cv_vectors = np.concatenate([model1.encode([cv['cv_text']]), model2.encode([cv['cv_text']]), model3.encode([cv['cv_text']])], axis=1)
+                # Calculer le score basé sur les compétences et le modèle de Kano
+                score_kano = sum(
+                    poids_kano.get(kano_category, 0) 
+                    for competence, kano_category in competences_utilisateur 
+                    if competence in cv.get('competences', [])
+                )
+                score_kano = min(score_kano, 1)
+
+                # Encodage des vecteurs pour le CV
+                cv_vectors = np.concatenate([
+                    model1.encode([cv['cv_text']]),
+                    model2.encode([cv['cv_text']]),
+                    model3.encode([cv['cv_text']])
+                ], axis=1)
 
                 # Calculer la similarité cosinus
                 similarity = compute_cosine_similarity(cv_vectors[0], offer_vector[0])
 
-                # Stocker le résultat dans une liste pour affichage
+                # Ajouter le résultat à la liste
                 results.append({
                     "Nom du CV": cv_id,
+                    "Score Kano": score_kano,
                     "Similarité Cosinus": similarity
                 })
 
-            # Tri des résultats par score de similarité
+            # Tri des résultats par score de similarité cosinus
             results.sort(key=lambda x: x["Similarité Cosinus"], reverse=True)
             
-            #store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
-            #store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
+            #Stockage des vecteurs dan qdrant
+            store_vectors_in_qdrant(cv_vectors, [f"{cv_id[0]}_{cv_id[1]}"])
+            store_offer_vector_in_qdrant(offer_vector.flatten(), selected_offer)
+
+            
 
             # Afficher les résultats
-            df_results = pd.DataFrame(results)
-            st.dataframe(df_results.style.apply(highlight_best_candidates, axis=1))
+            if results:
+                st.write("### Résultats de la similarité :")
+                df_results = pd.DataFrame(results)
+                st.dataframe(df_results.style.highlight_max(axis=0, subset=["Similarité Cosinus"], color="lightgreen"))
+                st.session_state['df_results'] = df_results
+            else:
+                st.warning("Aucun résultat de similarité n'a été généré.")
 
-            # Stocker les résultats dans le session state pour communication
-            st.session_state['df_results'] = df_results
-            st.session_state['cvs_texts'] = cvs_texts
 
             # Afficher le meilleur candidat
             if results:
@@ -547,29 +596,26 @@ def main():
             if st.session_state.selected_candidate:
                 # Afficher les informations actuelles du candidat
                 st.write("### Informations actuelles du candidat :")
-                st.write(f"**Nom :** {st.session_state.selected_candidate['nom']}")
-                st.write(f"**Prénom :** {st.session_state.selected_candidate['prenom']}")
+                st.write(f"**Nom & Prénom :** {st.session_state.selected_candidate['nom_prenom']}")
                 st.write(f"**Adresse Mail :** {st.session_state.selected_candidate['mail']}")
                 st.write(f"**Numéro de téléphone :** {st.session_state.selected_candidate['numero_tlfn']}")
 
                 st.write("### Modifier les informations du candidat :")
                 # Champs de texte pré-remplis avec les informations actuelles
-                nom = st.text_input("Nom", st.session_state.selected_candidate["nom"], key="nom_input")
-                prenom = st.text_input("Prénom", st.session_state.selected_candidate["prenom"], key="prenom_input")
+                nom_prenom = st.text_input("Nom & Prénom", st.session_state.selected_candidate["nom_prenom"], key="nom_input")
                 mail = st.text_input("Adresse Mail", st.session_state.selected_candidate["mail"], key="mail_input")
                 numero_tlfn = st.text_input("Numéro de téléphone", st.session_state.selected_candidate["numero_tlfn"], key="phone_input")
 
                 # Bouton pour enregistrer les modifications
                 if st.button("Enregistrer les modifications"):
                     updated_data = {
-                        "nom": nom,
-                        "prenom": prenom,
+                        "nom_prenom": nom_prenom,
                         "mail": mail,
                         "numero_tlfn": numero_tlfn,
                     }
 
                     # Valider les champs avant de mettre à jour
-                    if not nom or not prenom:
+                    if not nom_prenom:
                         st.error("Veuillez remplir tous les champs.")
                     else:
                         # Mettre à jour l'enregistrement dans la base de données
